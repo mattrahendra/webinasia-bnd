@@ -17,6 +17,7 @@ class TemplateProjectResource extends JsonResource
             'preview_url' => $this->preview_url,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'template' => new TemplateResource($this->whenLoaded('template')),
         ];
     }
 }

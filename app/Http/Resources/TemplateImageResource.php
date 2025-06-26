@@ -16,6 +16,7 @@ class TemplateImageResource extends JsonResource
             'image_url' => $this->image_path ? asset('storage/' . $this->image_path) : null,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'template' => new TemplateResource($this->whenLoaded('template')),
         ];
     }
 }

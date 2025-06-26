@@ -26,12 +26,12 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
+            'message' => 'User registered successfully',
             'user' => new UserResource($user),
             'token' => $token,
-            'token_type' => 'Bearer',
         ], 201);
     }
 
@@ -49,12 +49,12 @@ class AuthController extends Controller
         }
 
         $user = User::where('email', $request->email)->first();
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
+            'message' => 'Login successful',
             'user' => new UserResource($user),
             'token' => $token,
-            'token_type' => 'Bearer',
         ]);
     }
 
@@ -62,7 +62,9 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'Logged out successfully']);
+        return response()->json([
+            'message' => 'Logged out successfully',
+        ]);
     }
 
     public function me(Request $request)

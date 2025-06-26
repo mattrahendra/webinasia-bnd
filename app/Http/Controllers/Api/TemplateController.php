@@ -13,54 +13,84 @@ class TemplateController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Template::with(['category', 'images', 'projects']);
+        $query = Template::query();
 
-        // Filter berdasarkan kategori
+        // Search functionality
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('description', 'like', '%' . $request->search . '%');
+        }
+
+        // Filter by category
         if ($request->has('category_id')) {
             $query->where('category_id', $request->category_id);
         }
 
-        // Search berdasarkan nama
-        if ($request->has('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
-        }
-
-        // Filter berdasarkan harga
+        // Price range filter
         if ($request->has('min_price')) {
             $query->where('price', '>=', $request->min_price);
         }
-
         if ($request->has('max_price')) {
             $query->where('price', '<=', $request->max_price);
         }
 
-        $templates = $query->paginate(15);
+        // Include relationships
+        if ($request->boolean('with_category')) {
+            $query->with('category');
+        }
+        if ($request->boolean('with_images')) {
+            $query->with('images');
+        }
+        if ($request->boolean('with_projects')) {
+            $query->with('projects');
+        }
+
+        // Sorting
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortDirection = $request->get('sort_direction', 'desc');
+        $query->orderBy($sortBy, $sortDirection);
+
+        // Pagination
+        $perPage = $request->get('per_page', 15);
+        $templates = $query->paginate($perPage);
+
         return TemplateResource::collection($templates);
     }
 
     public function store(StoreTemplateRequest $request)
     {
         $template = Template::create($request->validated());
-        $template->load(['category', 'images', 'projects']);
+
         return new TemplateResource($template);
     }
 
-    public function show(Template $template)
+    public function show(Template $template, Request $request)
     {
-        $template->load(['category', 'images', 'projects']);
+        $with = [];
+        if ($request->boolean('with_category')) $with[] = 'category';
+        if ($request->boolean('with_images')) $with[] = 'images';
+        if ($request->boolean('with_projects')) $with[] = 'projects';
+
+        if (!empty($with)) {
+            $template->load($with);
+        }
+
         return new TemplateResource($template);
     }
 
     public function update(UpdateTemplateRequest $request, Template $template)
     {
         $template->update($request->validated());
-        $template->load(['category', 'images', 'projects']);
+
         return new TemplateResource($template);
     }
 
     public function destroy(Template $template)
     {
         $template->delete();
-        return response()->json(['message' => 'Template deleted successfully']);
+
+        return response()->json([
+            'message' => 'Template deleted successfully',
+        ]);
     }
 }
