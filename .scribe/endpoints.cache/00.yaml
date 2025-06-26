@@ -121,95 +121,6 @@ endpoints:
   -
     httpMethods:
       - GET
-    uri: api/templates
-    metadata:
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses:
-      -
-        status: 200
-        content: '{"data":[{"id":6,"name":"Kos Andreana","description":"adwafesgdhfjygkiljoihkugjfhdg","price":"20000.00","main_image":"template-images\/01JXYJSNZ1AQ1MG5P3YQFVQRFW.jpeg","category":{"id":2,"name":"E-Commerce","description":"Kategori E-Commerce","created_at":"2025-06-17T08:29:47.000000Z","updated_at":"2025-06-17T08:29:47.000000Z"},"images":[{"id":1,"template_id":6,"image_path":"template-images\/01JXYJSNZ1AQ1MG5P3YQFVQRFW.jpeg","image_url":"http:\/\/127.0.0.1:8000\/storage\/template-images\/01JXYJSNZ1AQ1MG5P3YQFVQRFW.jpeg","created_at":"2025-06-17T09:16:20.000000Z","updated_at":"2025-06-17T09:16:20.000000Z"},{"id":2,"template_id":6,"image_path":"template-images\/01JXYJSNZ7G58JEY1AMWB0ZN58.jpeg","image_url":"http:\/\/127.0.0.1:8000\/storage\/template-images\/01JXYJSNZ7G58JEY1AMWB0ZN58.jpeg","created_at":"2025-06-17T09:16:20.000000Z","updated_at":"2025-06-17T09:16:20.000000Z"},{"id":3,"template_id":6,"image_path":"template-images\/01JXYJSNZDZ3FFABF11E24NJZH.jpeg","image_url":"http:\/\/127.0.0.1:8000\/storage\/template-images\/01JXYJSNZDZ3FFABF11E24NJZH.jpeg","created_at":"2025-06-17T09:16:20.000000Z","updated_at":"2025-06-17T09:16:20.000000Z"}],"projects":[{"id":3,"template_id":6,"project_file":"templates\/projects\/01JXYSY5P8CA4PX3TPKAWF19K7.zip","preview_path":"templates\/projects\/extracted\/3","preview_url":"\/storage\/templates\/projects\/extracted\/3\/index.html","created_at":"2025-06-17T10:58:00.000000Z","updated_at":"2025-06-17T11:21:07.000000Z"}],"created_at":"2025-06-17T09:16:20.000000Z","updated_at":"2025-06-17T09:20:56.000000Z"}],"links":{"first":"http:\/\/127.0.0.1:8000\/api\/templates?page=1","last":"http:\/\/127.0.0.1:8000\/api\/templates?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":1,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"http:\/\/127.0.0.1:8000\/api\/templates?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"path":"http:\/\/127.0.0.1:8000\/api\/templates","per_page":15,"to":1,"total":1}}'
-        headers:
-          cache-control: 'no-cache, private'
-          content-type: application/json
-          access-control-allow-origin: '*'
-        description: null
-        custom: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-    custom: []
-  -
-    httpMethods:
-      - GET
-    uri: 'api/templates/{template_id}'
-    metadata:
-      groupName: Endpoints
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: ''
-      description: ''
-      authenticated: false
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      template_id:
-        name: template_id
-        description: 'The ID of the template.'
-        required: true
-        example: 6
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-    cleanUrlParameters:
-      template_id: 6
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses:
-      -
-        status: 200
-        content: '{"data":{"id":6,"name":"Kos Andreana","description":"adwafesgdhfjygkiljoihkugjfhdg","price":"20000.00","main_image":"template-images\/01JXYJSNZ1AQ1MG5P3YQFVQRFW.jpeg","category":{"id":2,"name":"E-Commerce","description":"Kategori E-Commerce","created_at":"2025-06-17T08:29:47.000000Z","updated_at":"2025-06-17T08:29:47.000000Z"},"images":[{"id":1,"template_id":6,"image_path":"template-images\/01JXYJSNZ1AQ1MG5P3YQFVQRFW.jpeg","image_url":"http:\/\/127.0.0.1:8000\/storage\/template-images\/01JXYJSNZ1AQ1MG5P3YQFVQRFW.jpeg","created_at":"2025-06-17T09:16:20.000000Z","updated_at":"2025-06-17T09:16:20.000000Z"},{"id":2,"template_id":6,"image_path":"template-images\/01JXYJSNZ7G58JEY1AMWB0ZN58.jpeg","image_url":"http:\/\/127.0.0.1:8000\/storage\/template-images\/01JXYJSNZ7G58JEY1AMWB0ZN58.jpeg","created_at":"2025-06-17T09:16:20.000000Z","updated_at":"2025-06-17T09:16:20.000000Z"},{"id":3,"template_id":6,"image_path":"template-images\/01JXYJSNZDZ3FFABF11E24NJZH.jpeg","image_url":"http:\/\/127.0.0.1:8000\/storage\/template-images\/01JXYJSNZDZ3FFABF11E24NJZH.jpeg","created_at":"2025-06-17T09:16:20.000000Z","updated_at":"2025-06-17T09:16:20.000000Z"}],"projects":[{"id":3,"template_id":6,"project_file":"templates\/projects\/01JXYSY5P8CA4PX3TPKAWF19K7.zip","preview_path":"templates\/projects\/extracted\/3","preview_url":"\/storage\/templates\/projects\/extracted\/3\/index.html","created_at":"2025-06-17T10:58:00.000000Z","updated_at":"2025-06-17T11:21:07.000000Z"}],"created_at":"2025-06-17T09:16:20.000000Z","updated_at":"2025-06-17T09:20:56.000000Z"}}'
-        headers:
-          cache-control: 'no-cache, private'
-          content-type: application/json
-          access-control-allow-origin: '*'
-        description: null
-        custom: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-    custom: []
-  -
-    httpMethods:
-      - GET
     uri: api/categories
     metadata:
       groupName: Endpoints
@@ -298,6 +209,195 @@ endpoints:
     custom: []
   -
     httpMethods:
+      - GET
+    uri: api/templates
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: '{"data":[{"id":6,"name":"Kos Andreana","description":"adwafesgdhfjygkiljoihkugjfhdg","category_id":2,"price":"20000.00","main_image":"template-images\/01JXYJSNZ1AQ1MG5P3YQFVQRFW.jpeg","created_at":"2025-06-17T09:16:20.000000Z","updated_at":"2025-06-17T09:20:56.000000Z"}],"links":{"first":"http:\/\/127.0.0.1:8000\/api\/templates?page=1","last":"http:\/\/127.0.0.1:8000\/api\/templates?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":1,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"http:\/\/127.0.0.1:8000\/api\/templates?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"path":"http:\/\/127.0.0.1:8000\/api\/templates","per_page":15,"to":1,"total":1}}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/templates/{template_id}'
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      template_id:
+        name: template_id
+        description: 'The ID of the template.'
+        required: true
+        example: 6
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      template_id: 6
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: '{"data":{"id":6,"name":"Kos Andreana","description":"adwafesgdhfjygkiljoihkugjfhdg","category_id":2,"price":"20000.00","main_image":"template-images\/01JXYJSNZ1AQ1MG5P3YQFVQRFW.jpeg","created_at":"2025-06-17T09:16:20.000000Z","updated_at":"2025-06-17T09:20:56.000000Z"}}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/templates/{template}/images'
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      template:
+        name: template
+        description: 'The template.'
+        required: true
+        example: 6
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      template: 6
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: '{"data":[{"id":1,"template_id":6,"image_path":"template-images\/01JXYJSNZ1AQ1MG5P3YQFVQRFW.jpeg","image_url":"http:\/\/127.0.0.1:8000\/storage\/template-images\/01JXYJSNZ1AQ1MG5P3YQFVQRFW.jpeg","created_at":"2025-06-17T09:16:20.000000Z","updated_at":"2025-06-17T09:16:20.000000Z"},{"id":2,"template_id":6,"image_path":"template-images\/01JXYJSNZ7G58JEY1AMWB0ZN58.jpeg","image_url":"http:\/\/127.0.0.1:8000\/storage\/template-images\/01JXYJSNZ7G58JEY1AMWB0ZN58.jpeg","created_at":"2025-06-17T09:16:20.000000Z","updated_at":"2025-06-17T09:16:20.000000Z"},{"id":3,"template_id":6,"image_path":"template-images\/01JXYJSNZDZ3FFABF11E24NJZH.jpeg","image_url":"http:\/\/127.0.0.1:8000\/storage\/template-images\/01JXYJSNZDZ3FFABF11E24NJZH.jpeg","created_at":"2025-06-17T09:16:20.000000Z","updated_at":"2025-06-17T09:16:20.000000Z"}],"links":{"first":"http:\/\/127.0.0.1:8000\/api\/templates\/6\/images?page=1","last":"http:\/\/127.0.0.1:8000\/api\/templates\/6\/images?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":1,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"http:\/\/127.0.0.1:8000\/api\/templates\/6\/images?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"path":"http:\/\/127.0.0.1:8000\/api\/templates\/6\/images","per_page":15,"to":3,"total":3}}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/templates/{template}/projects'
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      template:
+        name: template
+        description: 'The template.'
+        required: true
+        example: 6
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      template: 6
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: '{"data":[{"id":3,"template_id":6,"project_file":"templates\/projects\/01JXYSY5P8CA4PX3TPKAWF19K7.zip","preview_path":"templates\/projects\/extracted\/3","preview_url":"\/storage\/templates\/projects\/extracted\/3\/index.html","created_at":"2025-06-17T10:58:00.000000Z","updated_at":"2025-06-17T11:21:07.000000Z"}],"links":{"first":"http:\/\/127.0.0.1:8000\/api\/templates\/6\/projects?page=1","last":"http:\/\/127.0.0.1:8000\/api\/templates\/6\/projects?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":1,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"http:\/\/127.0.0.1:8000\/api\/templates\/6\/projects?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"path":"http:\/\/127.0.0.1:8000\/api\/templates\/6\/projects","per_page":15,"to":1,"total":1}}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
       - POST
     uri: api/logout
     metadata:
@@ -351,8 +451,8 @@ endpoints:
     fileParameters: []
     responses:
       -
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 500
+        content: '{"message":"Something went wrong","error":"Internal server error"}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
@@ -398,9 +498,9 @@ endpoints:
         custom: []
       description:
         name: description
-        description: ''
+        description: 'Must not be greater than 1000 characters.'
         required: false
-        example: 'Dolores dolorum amet iste laborum eius est dolor.'
+        example: 'Dolores molestias ipsam sit.'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -408,7 +508,7 @@ endpoints:
         custom: []
     cleanBodyParameters:
       name: vmqeopfuudtdsufvyvddq
-      description: 'Dolores dolorum amet iste laborum eius est dolor.'
+      description: 'Dolores molestias ipsam sit.'
     fileParameters: []
     responses: []
     responseFields: []
@@ -420,8 +520,7 @@ endpoints:
   -
     httpMethods:
       - PUT
-      - PATCH
-    uri: 'api/categories/{id}'
+    uri: 'api/categories/{category_id}'
     metadata:
       groupName: Endpoints
       groupDescription: ''
@@ -435,8 +534,8 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      id:
-        name: id
+      category_id:
+        name: category_id
         description: 'The ID of the category.'
         required: true
         example: 1
@@ -446,7 +545,7 @@ endpoints:
         nullable: false
         custom: []
     cleanUrlParameters:
-      id: 1
+      category_id: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
@@ -462,9 +561,9 @@ endpoints:
         custom: []
       description:
         name: description
-        description: ''
+        description: 'Must not be greater than 1000 characters.'
         required: false
-        example: 'Dolores dolorum amet iste laborum eius est dolor.'
+        example: 'Dolores molestias ipsam sit.'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -472,7 +571,7 @@ endpoints:
         custom: []
     cleanBodyParameters:
       name: vmqeopfuudtdsufvyvddq
-      description: 'Dolores dolorum amet iste laborum eius est dolor.'
+      description: 'Dolores molestias ipsam sit.'
     fileParameters: []
     responses: []
     responseFields: []
@@ -484,7 +583,7 @@ endpoints:
   -
     httpMethods:
       - DELETE
-    uri: 'api/categories/{id}'
+    uri: 'api/categories/{category_id}'
     metadata:
       groupName: Endpoints
       groupDescription: ''
@@ -498,8 +597,8 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      id:
-        name: id
+      category_id:
+        name: category_id
         description: 'The ID of the category.'
         required: true
         example: 1
@@ -509,7 +608,7 @@ endpoints:
         nullable: false
         custom: []
     cleanUrlParameters:
-      id: 1
+      category_id: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -555,9 +654,9 @@ endpoints:
         custom: []
       description:
         name: description
-        description: ''
+        description: 'Must not be greater than 1000 characters.'
         required: false
-        example: 'Dolores dolorum amet iste laborum eius est dolor.'
+        example: 'Dolores molestias ipsam sit.'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -585,7 +684,7 @@ endpoints:
         custom: []
     cleanBodyParameters:
       name: vmqeopfuudtdsufvyvddq
-      description: 'Dolores dolorum amet iste laborum eius est dolor.'
+      description: 'Dolores molestias ipsam sit.'
       category_id: consequatur
       price: 45
     fileParameters: []
@@ -599,8 +698,7 @@ endpoints:
   -
     httpMethods:
       - PUT
-      - PATCH
-    uri: 'api/templates/{id}'
+    uri: 'api/templates/{template_id}'
     metadata:
       groupName: Endpoints
       groupDescription: ''
@@ -614,8 +712,8 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      id:
-        name: id
+      template_id:
+        name: template_id
         description: 'The ID of the template.'
         required: true
         example: 6
@@ -625,7 +723,7 @@ endpoints:
         nullable: false
         custom: []
     cleanUrlParameters:
-      id: 6
+      template_id: 6
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
@@ -641,9 +739,9 @@ endpoints:
         custom: []
       description:
         name: description
-        description: ''
+        description: 'Must not be greater than 1000 characters.'
         required: false
-        example: 'Dolores dolorum amet iste laborum eius est dolor.'
+        example: 'Dolores molestias ipsam sit.'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -671,7 +769,7 @@ endpoints:
         custom: []
     cleanBodyParameters:
       name: vmqeopfuudtdsufvyvddq
-      description: 'Dolores dolorum amet iste laborum eius est dolor.'
+      description: 'Dolores molestias ipsam sit.'
       category_id: consequatur
       price: 45
     fileParameters: []
@@ -685,7 +783,7 @@ endpoints:
   -
     httpMethods:
       - DELETE
-    uri: 'api/templates/{id}'
+    uri: 'api/templates/{template_id}'
     metadata:
       groupName: Endpoints
       groupDescription: ''
@@ -699,8 +797,8 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      id:
-        name: id
+      template_id:
+        name: template_id
         description: 'The ID of the template.'
         required: true
         example: 6
@@ -710,7 +808,445 @@ endpoints:
         nullable: false
         custom: []
     cleanUrlParameters:
-      id: 6
+      template_id: 6
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: api/template-images
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: multipart/form-data
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      template_id:
+        name: template_id
+        description: 'The <code>id</code> of an existing record in the templates table.'
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      image:
+        name: image
+        description: 'Must be an image. Must not be greater than 2048 kilobytes.'
+        required: true
+        example: null
+        type: file
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      template_id: consequatur
+    fileParameters:
+      image: null
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/template-images/{templateImage_id}'
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      templateImage_id:
+        name: templateImage_id
+        description: 'The ID of the templateImage.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      templateImage_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 500
+        content: '{"message":"Something went wrong","error":"Internal server error"}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: 'api/template-images/{templateImage_id}'
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: multipart/form-data
+      Accept: application/json
+    urlParameters:
+      templateImage_id:
+        name: templateImage_id
+        description: 'The ID of the templateImage.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      templateImage_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      template_id:
+        name: template_id
+        description: 'The <code>id</code> of an existing record in the templates table.'
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      image:
+        name: image
+        description: 'Must be an image. Must not be greater than 2048 kilobytes.'
+        required: false
+        example: null
+        type: file
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      template_id: consequatur
+    fileParameters:
+      image: null
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - DELETE
+    uri: 'api/template-images/{templateImage_id}'
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      templateImage_id:
+        name: templateImage_id
+        description: 'The ID of the templateImage.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      templateImage_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: api/template-projects
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: multipart/form-data
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      template_id:
+        name: template_id
+        description: 'The <code>id</code> of an existing record in the templates table.'
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      project_file:
+        name: project_file
+        description: 'Must be a file. Must not be greater than 10240 kilobytes.'
+        required: true
+        example: null
+        type: file
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      preview_files:
+        name: preview_files
+        description: 'Must be a file.'
+        required: false
+        example:
+          - null
+        type: 'file[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      template_id: consequatur
+    fileParameters:
+      project_file: null
+      preview_files:
+        - null
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/template-projects/{templateProject_id}'
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      templateProject_id:
+        name: templateProject_id
+        description: 'The ID of the templateProject.'
+        required: true
+        example: 3
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      templateProject_id: 3
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 500
+        content: '{"message":"Something went wrong","error":"Internal server error"}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: 'api/template-projects/{templateProject_id}'
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: multipart/form-data
+      Accept: application/json
+    urlParameters:
+      templateProject_id:
+        name: templateProject_id
+        description: 'The ID of the templateProject.'
+        required: true
+        example: 3
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      templateProject_id: 3
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      template_id:
+        name: template_id
+        description: 'The <code>id</code> of an existing record in the templates table.'
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      project_file:
+        name: project_file
+        description: 'Must be a file. Must not be greater than 10240 kilobytes.'
+        required: false
+        example: null
+        type: file
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      preview_files:
+        name: preview_files
+        description: 'Must be a file.'
+        required: false
+        example:
+          - null
+        type: 'file[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      template_id: consequatur
+    fileParameters:
+      project_file: null
+      preview_files:
+        - null
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - DELETE
+    uri: 'api/template-projects/{templateProject_id}'
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      templateProject_id:
+        name: templateProject_id
+        description: 'The ID of the templateProject.'
+        required: true
+        example: 3
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      templateProject_id: 3
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
