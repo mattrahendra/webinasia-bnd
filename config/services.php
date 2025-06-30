@@ -35,4 +35,16 @@ return [
         ],
     ],
 
+    'godaddy' => [
+        'api_key' => env('GODADDY_API_KEY'),
+        'api_secret' => env('GODADDY_API_SECRET'),
+        'sandbox' => env('GODADDY_SANDBOX', true), // Set false for production
+    ],
+
+    'midtrans' => [
+        'server_key' => env('MIDTRANS_SERVER_KEY'),
+        'client_key' => env('MIDTRANS_CLIENT_KEY'),
+        'sandbox' => env('MIDTRANS_SANDBOX', true), // Set false for production
+    ],
+
 ];
