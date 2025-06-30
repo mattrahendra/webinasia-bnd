@@ -144,7 +144,7 @@ endpoints:
     responses:
       -
         status: 200
-        content: '{"data":[{"id":1,"name":"Health","description":"Kategori Kesehatan","created_at":"2025-06-17T08:29:32.000000Z","updated_at":"2025-06-17T08:29:32.000000Z"},{"id":2,"name":"E-Commerce","description":"Kategori E-Commerce","created_at":"2025-06-17T08:29:47.000000Z","updated_at":"2025-06-17T08:29:47.000000Z"},{"id":3,"name":"Action","description":"Action Kategory","created_at":"2025-06-17T08:29:57.000000Z","updated_at":"2025-06-17T08:29:57.000000Z"}],"links":{"first":"http:\/\/127.0.0.1:8000\/api\/categories?page=1","last":"http:\/\/127.0.0.1:8000\/api\/categories?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":1,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"http:\/\/127.0.0.1:8000\/api\/categories?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"path":"http:\/\/127.0.0.1:8000\/api\/categories","per_page":15,"to":3,"total":3}}'
+        content: '{"data":[{"id":1,"name":"Health","description":"Kategori Kesehatan","created_at":"2025-06-17T08:29:32.000000Z","updated_at":"2025-06-17T08:29:32.000000Z"},{"id":2,"name":"E-Commerce","description":"Kategori E-Commerce","created_at":"2025-06-17T08:29:47.000000Z","updated_at":"2025-06-17T08:29:47.000000Z"},{"id":3,"name":"Action","description":"Action Kategory","created_at":"2025-06-17T08:29:57.000000Z","updated_at":"2025-06-17T08:29:57.000000Z"},{"id":4,"name":"Construction","description":"Memasak","created_at":"2025-06-27T16:09:35.000000Z","updated_at":"2025-06-27T16:09:35.000000Z"}],"links":{"first":"http:\/\/127.0.0.1:8000\/api\/categories?page=1","last":"http:\/\/127.0.0.1:8000\/api\/categories?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":1,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"http:\/\/127.0.0.1:8000\/api\/categories?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"path":"http:\/\/127.0.0.1:8000\/api\/categories","per_page":15,"to":4,"total":4}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
@@ -233,7 +233,7 @@ endpoints:
     responses:
       -
         status: 200
-        content: '{"data":[{"id":6,"name":"Kos Andreana","description":"adwafesgdhfjygkiljoihkugjfhdg","category_id":2,"price":"20000.00","main_image":"template-images\/01JXYJSNZ1AQ1MG5P3YQFVQRFW.jpeg","created_at":"2025-06-17T09:16:20.000000Z","updated_at":"2025-06-17T09:20:56.000000Z"}],"links":{"first":"http:\/\/127.0.0.1:8000\/api\/templates?page=1","last":"http:\/\/127.0.0.1:8000\/api\/templates?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":1,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"http:\/\/127.0.0.1:8000\/api\/templates?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"path":"http:\/\/127.0.0.1:8000\/api\/templates","per_page":15,"to":1,"total":1}}'
+        content: '{"data":[{"id":7,"name":"Construction","description":"Memasak","category_id":4,"price":"15000.00","main_image":null,"created_at":"2025-06-27T16:11:29.000000Z","updated_at":"2025-06-27T16:11:29.000000Z"},{"id":6,"name":"Kos Andreana","description":"adwafesgdhfjygkiljoihkugjfhdg","category_id":2,"price":"20000.00","main_image":"template-images\/01JXYJSNZ1AQ1MG5P3YQFVQRFW.jpeg","created_at":"2025-06-17T09:16:20.000000Z","updated_at":"2025-06-17T09:20:56.000000Z"}],"links":{"first":"http:\/\/127.0.0.1:8000\/api\/templates?page=1","last":"http:\/\/127.0.0.1:8000\/api\/templates?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":1,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"http:\/\/127.0.0.1:8000\/api\/templates?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"path":"http:\/\/127.0.0.1:8000\/api\/templates","per_page":15,"to":2,"total":2}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
@@ -390,6 +390,144 @@ endpoints:
           access-control-allow-origin: '*'
         description: null
         custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/domains/search
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Search domain availability'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      domain:
+        name: domain
+        description: 'Must be at least 1 character. Must not be greater than 50 characters.'
+        required: true
+        example: vmqeopfuudtdsufvyvddq
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      extensions:
+        name: extensions
+        description: ''
+        required: false
+        example:
+          - co.id
+        type: 'string[]'
+        enumValues:
+          - com
+          - net
+          - org
+          - id
+          - co.id
+          - web.id
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      domain: vmqeopfuudtdsufvyvddq
+      extensions:
+        - co.id
+    fileParameters: []
+    responses:
+      -
+        status: 500
+        content: '{"message":"Something went wrong","error":"Internal server error"}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/domains/pricing
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get domain pricing'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 500
+        content: '{"message":"Something went wrong","error":"Internal server error"}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: api/payment/callback
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Handle payment callback/webhook'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
     responseFields: []
     auth: []
     controller: null
@@ -1251,6 +1389,365 @@ endpoints:
     cleanQueryParameters: []
     bodyParameters: []
     cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: api/domains/reserve
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Reserve domain temporarily (requires auth)'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      domain_name:
+        name: domain_name
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      extension:
+        name: extension
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      domain_name: consequatur
+      extension: consequatur
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/orders
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get user orders'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 500
+        content: '{"message":"Something went wrong","error":"Internal server error"}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: api/orders
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Create new order'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      template_id:
+        name: template_id
+        description: 'The <code>id</code> of an existing record in the templates table.'
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      domain_name:
+        name: domain_name
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      domain_extension:
+        name: domain_extension
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      customer_data:
+        name: customer_data
+        description: ''
+        required: true
+        example: []
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      customer_data.name:
+        name: customer_data.name
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      customer_data.email:
+        name: customer_data.email
+        description: 'Must be a valid email address.'
+        required: true
+        example: carolyne.luettgen@example.org
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      customer_data.phone:
+        name: customer_data.phone
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      customer_data.address:
+        name: customer_data.address
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      customer_data.city:
+        name: customer_data.city
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      customer_data.state:
+        name: customer_data.state
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      customer_data.postal_code:
+        name: customer_data.postal_code
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      customer_data.country:
+        name: customer_data.country
+        description: 'Must be 2 characters.'
+        required: true
+        example: mq
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      template_id: consequatur
+      domain_name: consequatur
+      domain_extension: consequatur
+      customer_data:
+        name: consequatur
+        email: carolyne.luettgen@example.org
+        phone: consequatur
+        address: consequatur
+        city: consequatur
+        state: consequatur
+        postal_code: consequatur
+        country: mq
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/orders/{order_id}'
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get single order'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      order_id:
+        name: order_id
+        description: 'The ID of the order.'
+        required: true
+        example: 17
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      order_id: 17
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 500
+        content: '{"message":"Something went wrong","error":"Internal server error"}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: 'api/orders/{order_id}/payment'
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Process payment'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      order_id:
+        name: order_id
+        description: 'The ID of the order.'
+        required: true
+        example: 17
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      order_id: 17
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      payment_method:
+        name: payment_method
+        description: ''
+        required: true
+        example: bank_transfer
+        type: string
+        enumValues:
+          - credit_card
+          - bank_transfer
+          - e_wallet
+          - qris
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      payment_method: bank_transfer
     fileParameters: []
     responses: []
     responseFields: []
