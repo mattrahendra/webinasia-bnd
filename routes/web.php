@@ -1,44 +1,20 @@
 <?php
 
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\DomainController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\TemplateController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-// Home Route
 Route::get('/', function () {
-    return view('home');
-})->name('home');
+    return view('welcome');
+});
 
-// Domain Routes
-Route::get('/domains/search', [DomainController::class, 'search'])->name('domains.search');
-Route::get('/domains/pricing', [DomainController::class, 'pricing'])->name('domains.pricing');
-Route::post('/domains/reserve', [DomainController::class, 'reserve'])->name('domains.reserve')->middleware('role:user,admin');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-// Category Routes
-Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
-Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-// Template Routes
-Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index');
-Route::get('/templates/{template}', [TemplateController::class, 'show'])->name('templates.show');
-
-// Order Routes
-Route::get('/orders', [OrderController::class, 'index'])->name('orders.index')->middleware('role:user,admin');
-Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show')->middleware('role:user,admin');
-Route::post('/orders/purchase', [OrderController::class, 'purchase'])->name('orders.purchase')->middleware('role:user,admin');
-
-// Payment Routes
-Route::post('/payments/{order}/process', [PaymentController::class, 'process'])->name('payments.process')->middleware('role:user,admin');
-Route::post('/payments/callback', [PaymentController::class, 'callback'])->name('payments.callback');
-
-// Static Pages
-Route::get('/about', function () {
-    return view('about');
-})->name('about');
-
-Route::get('/contact', function () {
-    return view('contact');
-})->name('contact');
+require __DIR__.'/auth.php';
