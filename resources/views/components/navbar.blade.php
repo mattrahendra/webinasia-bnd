@@ -2,7 +2,7 @@
     <div class="container mx-auto px-4 py-4 flex justify-between items-center">
         <!-- Logo -->
         <div class="text-2xl font-bold">
-            <a href="{{ route('home') }}"><img src="/path/to/logo.png" alt="Logo" class="h-10 inline"></a>
+            <a href="{{ route('home') }}"><img src="{{ asset('images/webinasia.svg') }}" alt="webinasia logo" class="h-10 inline"></a>
         </div>
 
         <!-- Links -->
