@@ -22,9 +22,35 @@ Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
 // Domain Routes
-Route::get('/domains/search', [DomainController::class, 'search'])->name('domains.search');
-Route::get('/domains/pricing', [DomainController::class, 'pricing'])->name('domains.pricing');
-Route::post('/domains/reserve', [DomainController::class, 'reserve'])->name('domains.reserve')->middleware('role:user,admin');
+Route::prefix('domains')->name('domains.')->group(function () {
+    // Halaman awal domain (public)
+    Route::get('/', [DomainController::class, 'index'])->name('index');
+
+    // Search domain (public - bisa diakses siapa saja)
+    Route::get('/search', [DomainController::class, 'search'])->name('search');
+    Route::post('/search', [DomainController::class, 'search']); // For AJAX
+
+    // Domain pricing (public)
+    Route::get('/pricing', [DomainController::class, 'pricing'])->name('pricing');
+
+    // Domain suggestions (public)
+    Route::get('/suggestions', [DomainController::class, 'suggestions'])->name('suggestions');
+
+    // Protected routes - require authentication
+    Route::middleware(['auth'])->group(function () {
+        // Reserve domain (redirect to order)
+        Route::post('/reserve', [DomainController::class, 'reserve'])->name('reserve');
+
+        // Domain management for authenticated users
+        Route::get('/my-domains', [DomainController::class, 'myDomains'])->name('my-domains');
+        Route::get('/wishlist', [DomainController::class, 'wishlist'])->name('wishlist');
+        Route::post('/wishlist/add', [DomainController::class, 'addToWishlist'])->name('wishlist.add');
+        Route::delete('/wishlist/remove/{domain}', [DomainController::class, 'removeFromWishlist'])->name('wishlist.remove');
+
+        // Domain notifications
+        Route::post('/notify-when-available', [DomainController::class, 'notifyWhenAvailable'])->name('notify-when-available');
+    });
+});
 
 // Category Routes
 Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');

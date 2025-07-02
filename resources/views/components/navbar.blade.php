@@ -8,7 +8,7 @@
         <!-- Links -->
         <div class="space-x-6">
             <a href="{{ route('home') }}" class="text-gray-600 hover:text-blue-600">Home</a>
-            <a href="{{ route('domains.search') }}" class="text-gray-600 hover:text-blue-600">Domain</a>
+            <a href="{{ route('domains.index') }}" class="text-gray-600 hover:text-blue-600">Domain</a>
             <a href="{{ route('templates.index') }}" class="text-gray-600 hover:text-blue-600">Template</a>
             <a href="{{ route('about') }}" class="text-gray-600 hover:text-blue-600">About</a>
             <a href="{{ route('contact') }}" class="text-gray-600 hover:text-blue-600">Contact</a>
