@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Domain;
 use App\Services\GoDaddyService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Session;
 
 class DomainController extends Controller
 {
@@ -62,29 +62,20 @@ class DomainController extends Controller
         return view('domains.pricing', compact('pricing'));
     }
 
-    public function reserve(Request $request)
+    public function selectDomain(Request $request)
     {
-        if (!Auth::check()) {
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Silakan login untuk memesan domain',
-                    'redirect' => route('login')
-                ], 401);
-            }
-            return redirect()->route('login')->with('error', 'Silakan login untuk memesan domain');
-        }
-
         $request->validate([
             'domain_name' => 'required|string',
             'extension' => 'required|string'
         ]);
 
-        $user = Auth::user();
-        $fullDomain = $request->domain_name . '.' . $request->extension;
+        $domainName = $request->domain_name;
+        $extension = $request->extension;
+        $fullDomain = $domainName . '.' . $extension;
 
         try {
-            $availability = $this->goDaddyService->checkAvailability($request->domain_name, [$request->extension]);
+            // Check availability first
+            $availability = $this->goDaddyService->checkAvailability($domainName, [$extension]);
 
             if (!$availability[0]['available']) {
                 if ($request->ajax()) {
@@ -96,41 +87,34 @@ class DomainController extends Controller
                 return redirect()->back()->with('error', 'Domain tidak tersedia');
             }
 
-            $domain = Domain::updateOrCreate(
-                ['name' => $fullDomain],
-                [
-                    'extension' => $request->extension,
-                    'price' => $availability[0]['price'],
-                    'status' => 'reserved',
-                    'user_id' => $user->id,
-                    'reserved_until' => now()->addMinutes(15),
-                ]
-            );
+            // Store domain data in session for order process
+            Session::put('selected_domain', [
+                'domain_name' => $domainName,
+                'extension' => $extension,
+                'full_domain' => $fullDomain,
+                'price' => $availability[0]['price'],
+                'selected_at' => now()
+            ]);
 
             if ($request->ajax()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Domain dipesan untuk 15 menit',
-                    'redirect' => route('orders.create', [
-                        'domain_name' => $request->domain_name,
-                        'domain_extension' => $request->extension
-                    ])
+                    'message' => 'Domain dipilih, mengarahkan ke halaman order...',
+                    'redirect' => route('orders.create', ['step' => 2])
                 ]);
             }
 
-            return redirect()->route('orders.create', [
-                'domain_name' => $request->domain_name,
-                'domain_extension' => $request->extension
-            ])->with('success', 'Domain dipesan untuk 15 menit. Selesaikan pesanan Anda sekarang!');
+            return redirect()->route('orders.create', ['step' => 2])
+                ->with('success', 'Domain ' . $fullDomain . ' telah dipilih. Silakan pilih template untuk melanjutkan.');
 
         } catch (\Exception $e) {
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Terjadi kesalahan saat memesan domain'
+                    'message' => 'Terjadi kesalahan saat memilih domain'
                 ], 500);
             }
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat memesan domain');
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memilih domain');
         }
     }
 
@@ -163,27 +147,6 @@ class DomainController extends Controller
                 'message' => 'Tidak dapat memeriksa ketersediaan domain'
             ], 500);
         }
-    }
-
-    public function getReservedDomains()
-    {
-        if (!Auth::check()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Authentication required'
-            ], 401);
-        }
-
-        $user = Auth::user();
-        $reservedDomains = Domain::where('user_id', $user->id)
-            ->where('status', 'reserved')
-            ->where('reserved_until', '>', now())
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'domains' => $reservedDomains
-        ]);
     }
 
     public function cleanupExpiredReservations()

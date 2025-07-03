@@ -183,4 +183,46 @@ class PaymentController extends Controller
                 'reserved_until' => null
             ]);
     }
+
+    public function success(Request $request)
+    {
+        $orderId = $request->get('order_id');
+
+        if ($orderId) {
+            $order = Order::where('order_number', $orderId)->first();
+            if ($order) {
+                return view('payment.success', compact('order'));
+            }
+        }
+
+        return view('payment.success')->with('message', 'Payment completed successfully');
+    }
+
+    public function error(Request $request)
+    {
+        $orderId = $request->get('order_id');
+
+        if ($orderId) {
+            $order = Order::where('order_number', $orderId)->first();
+            if ($order) {
+                return view('payment.error', compact('order'));
+            }
+        }
+
+        return view('payment.error')->with('message', 'Payment failed');
+    }
+
+    public function pending(Request $request)
+    {
+        $orderId = $request->get('order_id');
+
+        if ($orderId) {
+            $order = Order::where('order_number', $orderId)->first();
+            if ($order) {
+                return view('payment.pending', compact('order'));
+            }
+        }
+
+        return view('payment.pending')->with('message', 'Payment is pending');
+    }
 }

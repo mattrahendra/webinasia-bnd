@@ -13,7 +13,6 @@ class Order extends Model
 
     protected $fillable = [
         'order_number',
-        'user_id',
         'template_id',
         'domain_name',
         'domain_extension',
@@ -31,12 +30,6 @@ class Order extends Model
         'customer_data' => 'array'
     ];
 
-    // Relationships
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
     public function template(): BelongsTo
     {
         return $this->belongsTo(Template::class);
@@ -47,7 +40,6 @@ class Order extends Model
         return $this->hasMany(Payment::class);
     }
 
-    // Scopes
     public function scopePending($query)
     {
         return $query->where('status', 'pending');
@@ -63,7 +55,6 @@ class Order extends Model
         return $query->where('status', 'completed');
     }
 
-    // Accessors
     public function getFullDomainAttribute(): string
     {
         return $this->domain_name . '.' . $this->domain_extension;
@@ -89,7 +80,6 @@ class Order extends Model
         return in_array($this->status, ['paid', 'processing', 'completed']);
     }
 
-    // Methods
     public function markAsPaid(): bool
     {
         return $this->update(['status' => 'paid']);

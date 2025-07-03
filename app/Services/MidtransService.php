@@ -35,14 +35,17 @@ class MidtransService
                     'gross_amount' => (int) $orderData['gross_amount']
                 ],
                 'customer_details' => [
-                    'first_name' => $orderData['customer_details']['name'],
+                    'first_name' => $orderData['customer_details']['first_name'] ?? $orderData['customer_details']['name'] ?? '',
+                    'last_name' => $orderData['customer_details']['last_name'] ?? '',
                     'email' => $orderData['customer_details']['email'],
                     'phone' => $orderData['customer_details']['phone'],
                     'billing_address' => [
-                        'address' => $orderData['customer_details']['address'],
-                        'city' => $orderData['customer_details']['city'],
-                        'postal_code' => $orderData['customer_details']['postal_code'],
-                        'country_code' => $orderData['customer_details']['country']
+                        'first_name' => $orderData['customer_details']['first_name'] ?? $orderData['customer_details']['name'] ?? '',
+                        'last_name' => $orderData['customer_details']['last_name'] ?? '',
+                        'address' => $orderData['customer_details']['billing_address']['address'] ?? 'No address provided',
+                        'city' => $orderData['customer_details']['billing_address']['city'] ?? 'Unknown',
+                        'postal_code' => $orderData['customer_details']['billing_address']['postal_code'] ?? '00000',
+                        'country_code' => $orderData['customer_details']['billing_address']['country_code'] ?? 'IDN'
                     ]
                 ],
                 'item_details' => $orderData['item_details'],
@@ -53,8 +56,23 @@ class MidtransService
                 ]
             ];
 
+            // Add shipping address if provided
+            if (isset($orderData['customer_details']['shipping_address'])) {
+                $payload['customer_details']['shipping_address'] = [
+                    'first_name' => $orderData['customer_details']['shipping_address']['first_name'] ?? $orderData['customer_details']['name'] ?? '',
+                    'last_name' => $orderData['customer_details']['shipping_address']['last_name'] ?? '',
+                    'address' => $orderData['customer_details']['shipping_address']['address'] ?? 'No address provided',
+                    'city' => $orderData['customer_details']['shipping_address']['city'] ?? 'Unknown',
+                    'postal_code' => $orderData['customer_details']['shipping_address']['postal_code'] ?? '00000',
+                    'country_code' => $orderData['customer_details']['shipping_address']['country_code'] ?? 'IDN'
+                ];
+            }
+
             // Add payment method specific settings
             $payload = $this->addPaymentMethodSettings($payload, $paymentMethod);
+
+            // Log the payload for debugging
+            Log::info('Midtrans payload:', $payload);
 
             $response = Http::withHeaders([
                 'Accept' => 'application/json',
@@ -78,6 +96,7 @@ class MidtransService
                 ];
             } else {
                 $error = $response->json();
+                Log::error('Midtrans API error:', $error);
                 return [
                     'success' => false,
                     'message' => $error['error_messages'][0] ?? 'Payment creation failed'

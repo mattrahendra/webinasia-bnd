@@ -33,7 +33,6 @@
                     <i class="fas fa-sync-alt mr-1"></i>Pembaruan: {{ $result['price_formatted'] ?? 'Rp ' . number_format(($result['price_idr'] ?? $result['price'] ?? 199000), 0, ',', '.') }}/tahun
                 </div>
 
-                {{-- Features untuk domain tersedia --}}
                 <div class="flex flex-wrap gap-2 text-xs text-gray-600 mb-4">
                     <span class="bg-blue-50 text-blue-700 px-2 py-1 rounded-full">
                         <i class="fas fa-shield-alt mr-1"></i>Gratis Privacy Protection
@@ -53,7 +52,6 @@
                     </p>
                 </div>
 
-                {{-- Suggestions untuk domain yang sudah diambil --}}
                 <div class="bg-blue-50 p-3 rounded-lg mb-3">
                     <p class="text-sm text-blue-800 font-medium mb-2">
                         <i class="fas fa-lightbulb mr-1"></i>Saran Alternatif:
@@ -79,22 +77,21 @@
                 @endif
             </div>
 
-            {{-- Action Buttons --}}
             <div class="ml-6 flex flex-col space-y-2">
                 @if ($result['available'])
                 <div class="flex items-center space-x-2">
-                    {{-- Order Button --}}
-                    <form action="{{ route('domains.reserve') }}" method="POST" class="inline">
+                    <form action="{{ route('orders.selectDomain') }}" method="POST" class="inline">
                         @csrf
                         <input type="hidden" name="domain_name" value="{{ explode('.', $result['domain'])[0] }}">
                         <input type="hidden" name="extension" value="{{ $result['extension'] }}">
+                        <input type="hidden" name="price" value="{{ $result['price_idr'] ?? $result['price'] ?? 199000 }}">
+                        <input type="hidden" name="full_domain" value="{{ $result['domain'] }}">
                         <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                             <i class="fas fa-shopping-cart mr-2"></i>Pesan Sekarang
                         </button>
                     </form>
                 </div>
                 <div class="flex items-center space-x-2">
-                    {{-- Wishlist Button --}}
                     <button type="button"
                         class="px-3 py-2 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors flex-1"
                         onclick="toggleWishlist('{{ $result['domain'] }}', this)"
@@ -102,7 +99,6 @@
                         <i class="far fa-heart mr-1"></i>Wishlist
                     </button>
 
-                    {{-- Info Button --}}
                     <button type="button"
                         class="px-3 py-2 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors"
                         onclick="showDomainInfo('{{ $result['domain'] }}')"
@@ -112,15 +108,14 @@
                 </div>
                 @else
                 <div class="flex flex-col space-y-2">
-                    {{-- WHOIS Button --}}
                     <button type="button"
                         class="px-4 py-2 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
                         onclick="checkWhois('{{ $result['domain'] }}')">
                         <i class="fas fa-search mr-2"></i>Cek WHOIS
                     </button>
 
-                    {{-- Notify Button --}}
                     <button type="button"
+                        client-side validation
                         class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
                         onclick="notifyWhenAvailable('{{ $result['domain'] }}')">
                         <i class="fas fa-bell mr-2"></i>Beritahu Saya
@@ -133,7 +128,6 @@
     @endforeach
 </div>
 
-{{-- Enhanced Results Summary --}}
 <div class="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
     <h3 class="text-lg font-semibold text-gray-800 mb-4">
         <i class="fas fa-chart-bar mr-2 text-blue-600"></i>Ringkasan Pencarian
@@ -155,27 +149,28 @@
                 <i class="fas fa-times-circle mr-1 text-red-500"></i>Sudah Diambil
             </div>
         </div>
+        single-page form
         <div class="text-center">
             <div class="text-3xl font-bold text-blue-600 mb-1">
                 {{ count($results) }}
             </div>
             <div class="text-sm text-gray-600 flex items-center justify-center">
-                <i class="fas fa-globe mr-1 text-blue-500"></i>Total Dicek
+                <i class="fas fa-globe mr- minimal JavaScript
+1 text-blue-500"></i>Total Dicek
             </div>
         </div>
     </div>
 
     @if(collect($results)->where('available', true)->isNotEmpty())
     <div class="mt-4 p-4 bg-white rounded-lg border border-blue-200">
-        <p class="text-sm text-center text-gray-700">
+        < p class="text-sm text-center text-gray-700">
             <i class="fas fa-clock mr-1 text-orange-500"></i>
             <strong>Tips:</strong> Domain populer cepat habis! Pesan sekarang untuk mengamankan pilihan Anda.
-        </p>
+            </p>
     </div>
     @endif
 </div>
 
-{{-- Alternative Search Suggestions --}}
 @if(collect($results)->where('available', true)->isEmpty())
 <div class="mt-6 bg-yellow-50 border border-yellow-200 p-6 rounded-lg">
     <h4 class="font-semibold text-yellow-800 mb-3">
@@ -203,9 +198,8 @@
 @endif
 
 @else
-{{-- No Results Found --}}
 <div class="text-center py-16">
-    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+    <div class=" w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
         <i class="fas fa-search text-gray-400 text-3xl"></i>
     </div>
     <h3 class="text-2xl font-semibold text-gray-800 mb-3">Tidak Ada Hasil Ditemukan</h3>
@@ -228,7 +222,6 @@
 @endif
 
 <script>
-    // Existing functions enhanced
     function toggleWishlist(domain, button) {
         const icon = button.querySelector('i');
         const text = button.querySelector('span') || button;
@@ -255,7 +248,7 @@
     function showDomainInfo(domain) {
         const info = `
         <div class="text-left">
-            <h3 class="font-bold mb-2">Informasi ${domain}</h3>
+            < h3 class="font-bold mb-2">Informasi ${domain}</h3>
             <ul class="space-y-1 text-sm">
                 <li>• Gratis Privacy Protection</li>
                 <li>• Email Forwarding tidak terbatas</li>
@@ -266,19 +259,17 @@
         </div>
     `;
 
-        // Create custom modal here or use existing modal system
         alert(`Domain: ${domain}\n\nFeatures:\n- Free Privacy Protection\n- Email Forwarding\n- DNS Management\n- 24/7 Support\n- Auto-renewal available`);
     }
 
     function checkWhois(domain) {
-        window.open(`https://whois.net/whois/${domain}`, '_blank');
+        window.open(`https://whois/whois/${domain}`, '_blank');
     }
 
     function notifyWhenAvailable(domain) {
         const email = prompt(`Masukkan email Anda untuk diberitahu ketika ${domain} tersedia:`);
         if (email && email.includes('@')) {
             showNotification(`Kami akan memberitahu Anda di ${email} ketika ${domain} tersedia`, 'success');
-            // AJAX call to save notification request would go here
         } else if (email) {
             showNotification('Format email tidak valid', 'error');
         }
@@ -289,30 +280,26 @@
         const domainName = parts[0];
         const extension = parts[1];
 
-        // Trigger search for alternative domain
         if (typeof performSearch === 'function') {
-            document.getElementById('domain-input').value = domainName;
-
-            // Update extension selection
-            const extensionsSelect = document.getElementById('extensions-select');
+            document.getNameById('domain-input').value = domainName;
+            const extensionsSelect = document.getNameById('extensions-select');
             Array.from(extensionsSelect.options).forEach(option => {
                 option.selected = option.value === extension;
             });
-
             performSearch(domainName);
         }
     }
 
     function clearSearch() {
-        document.getElementById('domain-input').value = '';
-        document.getElementById('search-results').classList.add('hidden');
+        document.getNameById('domain-input').value = '';
+        document.getNameById('search-results').classList.add('hidden');
     }
 
     function showPopularDomains() {
         const popularDomains = ['toko', 'bisnis', 'online', 'store', 'shop', 'web'];
         const randomDomain = popularDomains[Math.floor(Math.random() * popularDomains.length)];
 
-        document.getElementById('domain-input').value = randomDomain;
+        document.getNameById('domain-input').value = randomDomain;
         if (typeof performSearch === 'function') {
             performSearch(randomDomain);
         }
@@ -337,12 +324,10 @@
 
         document.body.appendChild(notification);
 
-        // Animate in
         setTimeout(() => {
             notification.style.transform = 'translateX(0)';
         }, 100);
 
-        // Remove after 4 seconds
         setTimeout(() => {
             notification.style.transform = 'translateX(100%)';
             setTimeout(() => {

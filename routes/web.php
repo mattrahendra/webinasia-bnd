@@ -4,15 +4,15 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DomainController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TemplateController;
+use App\Models\Order;
 use Illuminate\Support\Facades\Route;
 
 // Home Route
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Authentication Routes
 Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
@@ -59,11 +59,26 @@ Route::get('/categories/{category}', [CategoryController::class, 'show'])->name(
 // Template Routes
 Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index');
 Route::get('/templates/{template}', [TemplateController::class, 'show'])->name('templates.show');
+Route::get('/templates/{template}/preview', [TemplateController::class, 'preview'])->name('templates.preview');
+Route::post('/templates/{template}/select', [TemplateController::class, 'selectTemplate'])->name('templates.select');
+// Route untuk debugging (hapus setelah selesai testing)
+    Route::get('/{template}/debug-preview', [TemplateController::class, 'debugPreview'])->name('debug-preview');
 
 // Order Routes
-Route::get('/orders', [OrderController::class, 'index'])->name('orders.index')->middleware('role:user,admin');
-Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show')->middleware('role:user,admin');
-Route::post('/orders/purchase', [OrderController::class, 'purchase'])->name('orders.purchase')->middleware('role:user,admin');
+Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
+Route::post('/orders/select-domain', [OrderController::class, 'selectDomain'])->name('orders.selectDomain');
+Route::post('/orders/select-template', [OrderController::class, 'selectTemplate'])->name('orders.selectTemplate');
+Route::post('/orders/create-order', [OrderController::class, 'createOrder'])->name('orders.createOrder');
+Route::get('/payment/process/{order}', [PaymentController::class, 'process'])->name('payment.process');
+// Route untuk menyimpan order dan memproses pembayaran
+Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+Route::post('/orders/index', [OrderController::class, 'showPayment'])->name('orders.index');
+
+Route::get('/orders/{order}/payment', [OrderController::class, 'showPayment'])->name('orders.payment');
+Route::post('/payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
+Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
+Route::get('/payment/error', [PaymentController::class, 'error'])->name('payment.error');
+Route::get('/payment/pending', [PaymentController::class, 'pending'])->name('payment.pending');
 
 // Payment Routes
 Route::post('/payments/{order}/process', [PaymentController::class, 'process'])->name('payments.process')->middleware('role:user,admin');

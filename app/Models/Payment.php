@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Payment extends Model
 {
@@ -12,9 +11,10 @@ class Payment extends Model
 
     protected $fillable = [
         'order_id',
-        'payment_method',
         'transaction_id',
         'external_id',
+        'payment_method',
+        'payment_type',
         'amount',
         'status',
         'payment_data',
@@ -22,72 +22,28 @@ class Payment extends Model
     ];
 
     protected $casts = [
-        'amount' => 'decimal:2',
         'payment_data' => 'array',
-        'paid_at' => 'datetime'
+        'paid_at' => 'datetime',
+        'amount' => 'decimal:2'
     ];
 
-    // Relationships
-    public function order(): BelongsTo
+    public function order()
     {
         return $this->belongsTo(Order::class);
     }
 
-    // Scopes
-    public function scopePending($query)
-    {
-        return $query->where('status', 'pending');
-    }
-
-    public function scopeSuccess($query)
-    {
-        return $query->where('status', 'success');
-    }
-
-    public function scopeFailed($query)
-    {
-        return $query->where('status', 'failed');
-    }
-
-    // Accessors
-    public function getIsSuccessAttribute(): bool
+    public function isSuccess()
     {
         return $this->status === 'success';
     }
 
-    public function getIsPendingAttribute(): bool
+    public function isPending()
     {
         return $this->status === 'pending';
     }
 
-    public function getIsFailedAttribute(): bool
+    public function isFailed()
     {
-        return in_array($this->status, ['failed', 'cancelled']);
-    }
-
-    public function getPaymentMethodNameAttribute(): string
-    {
-        $methods = [
-            'credit_card' => 'Credit Card',
-            'bank_transfer' => 'Bank Transfer',
-            'e_wallet' => 'E-Wallet (GoPay)',
-            'qris' => 'QRIS'
-        ];
-
-        return $methods[$this->payment_method] ?? ucfirst(str_replace('_', ' ', $this->payment_method));
-    }
-
-    // Methods
-    public function markAsSuccess(): bool
-    {
-        return $this->update([
-            'status' => 'success',
-            'paid_at' => now()
-        ]);
-    }
-
-    public function markAsFailed(): bool
-    {
-        return $this->update(['status' => 'failed']);
+        return $this->status === 'failed';
     }
 }
