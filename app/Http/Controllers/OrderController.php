@@ -6,6 +6,8 @@ use App\Models\Order;
 use App\Models\Template;
 use App\Services\MidtransService;
 use Illuminate\Http\Request;
+use App\Mail\PaymentInvoiceMail;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -40,7 +42,7 @@ class OrderController extends Controller
             'email' => 'required|email',
             'phone' => 'required|string',
             'years' => 'required|integer|min:1|max:5',
-            'payment_method' => 'required|string|in:bank_transfer,credit_card,e_wallet,qris',
+            'payment_method' => 'required|string|in:snap,bank_transfer,bca_va,bni_va,bri_va,credit_card,gopay,shopeepay,qris,indomaret,alfamart',
             'promo_code' => 'nullable|string',
             'address' => 'nullable|string',
             'city' => 'nullable|string',
@@ -52,12 +54,13 @@ class OrderController extends Controller
         $domainPrice = $validated['domain_price'] * $validated['years'];
         $totalPrice = $templatePrice + $domainPrice;
 
+        // Apply promo code
         if ($validated['promo_code'] === 'DISCOUNT10') {
             $totalPrice *= 0.9; // Diskon 10%
         }
 
         $order = Order::create([
-            'order_number' => 'ORD-' . time(),
+            'order_number' => 'ORD-' . time() . '-' . rand(1000, 9999),
             'template_id' => $validated['template_id'],
             'domain_name' => $validated['domain_name'],
             'domain_extension' => $validated['extension'],
@@ -69,10 +72,15 @@ class OrderController extends Controller
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'phone' => $validated['phone'],
+                'address' => $validated['address'],
+                'city' => $validated['city'],
+                'postal_code' => $validated['postal_code'],
             ],
         ]);
 
         $midtransService = new MidtransService();
+
+        // Prepare order data for Midtrans
         $orderData = [
             'order_id' => $order->order_number,
             'gross_amount' => $totalPrice,
@@ -82,41 +90,58 @@ class OrderController extends Controller
                 'phone' => $validated['phone'],
                 'billing_address' => [
                     'first_name' => $validated['name'],
-                    'address' => $validated['address'] ?? 'No address provided',
-                    'city' => $validated['city'] ?? 'Unknown',
-                    'postal_code' => $validated['postal_code'] ?? '00000',
+                    'address' => $validated['address'] ?: 'Jl. Raya Sandbox No. 123',
+                    'city' => $validated['city'] ?: 'Jakarta',
+                    'postal_code' => $validated['postal_code'] ?: '12345',
                     'country_code' => 'IDN',
                 ],
                 'shipping_address' => [
                     'first_name' => $validated['name'],
-                    'address' => $validated['address'] ?? 'No address provided',
-                    'city' => $validated['city'] ?? 'Unknown',
-                    'postal_code' => $validated['postal_code'] ?? '00000',
+                    'address' => $validated['address'] ?: 'Jl. Raya Sandbox No. 123',
+                    'city' => $validated['city'] ?: 'Jakarta',
+                    'postal_code' => $validated['postal_code'] ?: '12345',
                     'country_code' => 'IDN',
                 ],
             ],
             'item_details' => [
                 [
                     'id' => 'template_' . $template->id,
-                    'price' => $templatePrice,
+                    'price' => (int) $templatePrice,
                     'quantity' => 1,
                     'name' => 'Template: ' . $template->name,
                 ],
                 [
                     'id' => 'domain_' . $validated['domain_name'] . '.' . $validated['extension'],
-                    'price' => $validated['domain_price'],
+                    'price' => (int) $validated['domain_price'],
                     'quantity' => $validated['years'],
-                    'name' => 'Domain: ' . $validated['domain_name'] . '.' . $validated['extension'],
+                    'name' => 'Domain: ' . $validated['domain_name'] . '.' . $validated['extension'] . ' (' . $validated['years'] . ' year' . ($validated['years'] > 1 ? 's' : '') . ')',
                 ],
             ],
         ];
 
+        // Add discount item if promo code is applied
+        if ($validated['promo_code'] === 'DISCOUNT10') {
+            $discountAmount = ($templatePrice + $domainPrice) * 0.1;
+            $orderData['item_details'][] = [
+                'id' => 'discount_' . $validated['promo_code'],
+                'price' => -(int) $discountAmount,
+                'quantity' => 1,
+                'name' => 'Discount: ' . $validated['promo_code'] . ' (10%)',
+            ];
+        }
+
         $paymentMethod = $validated['payment_method'];
-        $result = $midtransService->createTransaction($orderData, $paymentMethod);
+
+        // Use Snap for mixed payment options or when payment method is 'snap'
+        if ($paymentMethod === 'snap' || $paymentMethod === 'mixed') {
+            $result = $midtransService->createSnapTransaction($orderData);
+        } else {
+            $result = $midtransService->createTransaction($orderData, $paymentMethod);
+        }
 
         if ($result['success']) {
             $payment = $order->payments()->create([
-                'transaction_id' => $result['data']['transaction_id'],
+                'transaction_id' => $result['data']['transaction_id'] ?? $order->order_number,
                 'payment_method' => $paymentMethod,
                 'payment_type' => $result['data']['payment_type'],
                 'status' => $result['data']['transaction_status'],
@@ -124,19 +149,22 @@ class OrderController extends Controller
                 'payment_data' => $result['data'],
             ]);
 
-            // Handle different payment types
+            // Handle different response types
             if (!empty($result['data']['redirect_url'])) {
-                // For payment methods that have redirect URLs (credit card, some e-wallets)
-                return redirect()->away($result['data']['redirect_url']);
+                // For Snap and other redirect-based payments
+                return redirect()->route('orders.payment', $order->id)
+                    ->with('success', 'Payment created successfully')
+                    ->with('payment_data', $result['data'])
+                    ->with('redirect_url', $result['data']['redirect_url']);
             } else {
-                // For payment methods without redirect URLs (QRIS, bank transfer)
+                // For direct payment methods (VA, QRIS, etc.)
                 return redirect()->route('orders.payment', $order->id)
                     ->with('success', 'Payment created successfully')
                     ->with('payment_data', $result['data']);
             }
         }
 
-        return back()->with('error', $result['message']);
+        return back()->with('error', $result['message'])->withInput();
     }
 
     public function showPayment(Order $order)
@@ -147,7 +175,104 @@ class OrderController extends Controller
             return redirect()->route('orders.index')->with('error', 'Payment not found');
         }
 
-        return view('orders.payment', compact('order', 'payment'));
+        $midtransService = new MidtransService();
+        $sandboxInstructions = $midtransService->getSandboxInstructions($payment->payment_type);
+
+        return view('orders.payment', compact('order', 'payment', 'sandboxInstructions'));
+    }
+
+    public function checkPaymentStatus(Order $order)
+    {
+        $midtransService = new MidtransService();
+        $result = $midtransService->getTransactionStatus($order->order_number);
+
+        if ($result['success']) {
+            $transactionData = $result['data'];
+
+            // Update payment status
+            $payment = $order->payments()->latest()->first();
+            if ($payment) {
+                $payment->update([
+                    'status' => $transactionData['transaction_status'],
+                    'payment_data' => array_merge($payment->payment_data, $transactionData)
+                ]);
+            }
+
+            // Update order status based on payment status
+            switch ($transactionData['transaction_status']) {
+                case 'settlement':
+                case 'capture':
+                    $order->update(['status' => 'paid']);
+                    break;
+                case 'pending':
+                    $order->update(['status' => 'pending']);
+                    break;
+                case 'deny':
+                case 'cancel':
+                case 'expire':
+                case 'failure':
+                    $order->update(['status' => 'cancelled']);
+                    break;
+            }
+
+            return response()->json([
+                'success' => true,
+                'status' => $transactionData['transaction_status'],
+                'order_status' => $order->fresh()->status
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => $result['message']
+        ]);
+    }
+
+    public function paymentSuccess(Request $request)
+    {
+        $orderId = $request->get('order_id');
+
+        if ($orderId) {
+            $order = Order::where('order_number', $orderId)->first();
+            if ($order) {
+                // Check payment status from Midtrans
+                $this->checkPaymentStatus($order);
+                return redirect()->route('orders.payment', $order->id)
+                    ->with('success', 'Payment completed successfully!');
+            }
+        }
+
+        return redirect()->route('home')->with('success', 'Payment completed successfully!');
+    }
+
+    public function paymentError(Request $request)
+    {
+        $orderId = $request->get('order_id');
+
+        if ($orderId) {
+            $order = Order::where('order_number', $orderId)->first();
+            if ($order) {
+                return redirect()->route('orders.payment', $order->id)
+                    ->with('error', 'Payment failed or was cancelled.');
+            }
+        }
+
+        return redirect()->route('home')->with('error', 'Payment failed or was cancelled.');
+    }
+
+    public function paymentPending(Request $request)
+    {
+        $orderId = $request->get('order_id');
+
+        if ($orderId) {
+            $order = Order::where('order_number', $orderId)->first();
+            if ($order) {
+                return redirect()->route('orders.payment', $order->id)
+                    ->with('info', 'Payment is pending. Please complete your payment.');
+            }
+        }
+
+        return redirect()->route('home')->with('info', 'Payment is pending.');
     }
 
     public function index(Request $request)
@@ -192,4 +317,54 @@ class OrderController extends Controller
 
         return view('orders.index', compact('orders', 'stats'));
     }
+
+    // Method untuk manual payment (simulasi pembayaran berhasil)
+public function manualPayment(Order $order)
+{
+    $payment = $order->payments()->latest()->first();
+
+    if (!$payment) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Payment not found'
+        ]);
+    }
+
+    // Update payment status
+    $payment->update([
+        'status' => 'success',
+        'paid_at' => now(),
+        'payment_data' => array_merge($payment->payment_data, [
+            'transaction_status' => 'success',
+            'settlement_time' => now()->toISOString(),
+            'manual_payment' => true
+        ])
+    ]);
+
+    // Update order status
+    $order->update(['status' => 'paid']);
+
+    try {
+        // Send invoice email
+        Mail::to($order->customer_data['email'])
+            ->send(new PaymentInvoiceMail($order, $payment));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Payment confirmed successfully. Invoice has been sent to your email.',
+            'order_status' => 'paid',
+            'payment_status' => 'settlement'
+        ]);
+    } catch (\Exception $e) {
+        // Log error but don't fail the payment
+        \Log::error('Failed to send invoice email: ' . $e->getMessage());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Payment confirmed successfully. There was an issue sending the invoice email, but your payment has been processed.',
+            'order_status' => 'paid',
+            'payment_status' => 'settlement'
+        ]);
+    }
+}
 }

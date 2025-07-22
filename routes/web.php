@@ -84,6 +84,26 @@ Route::get('/payment/pending', [PaymentController::class, 'pending'])->name('pay
 Route::post('/payments/{order}/process', [PaymentController::class, 'process'])->name('payments.process')->middleware('role:user,admin');
 Route::post('/payments/callback', [PaymentController::class, 'callback'])->name('payments.callback');
 
+// Payment callback routes
+Route::get('/payment/success', function () {
+    return view('payment.success');
+})->name('payment.success');
+
+Route::get('/payment/error', function () {
+    return view('payment.error');
+})->name('payment.error');
+
+Route::get('/payment/pending', function () {
+    return view('payment.pending');
+})->name('payment.pending');
+
+// API routes for AJAX calls
+Route::prefix('api/orders')->name('api.orders.')->group(function () {
+    Route::get('/{order}/payment-status', [OrderController::class, 'checkPaymentStatus'])->name('payment-status');
+});
+
+Route::post('/orders/{order}/manual-payment', [OrderController::class, 'manualPayment'])->name('orders.manual-payment');
+
 // Static Pages
 Route::get('/about', function () {
     return view('about');

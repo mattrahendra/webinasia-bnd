@@ -25,7 +25,7 @@ class OrderResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Select::make('template_id')
-                    ->relationship('template', 'name') // Assumes Template model has a 'name' field
+                    ->relationship('template', 'name')
                     ->required(),
                 Forms\Components\TextInput::make('domain_name')
                     ->required()
