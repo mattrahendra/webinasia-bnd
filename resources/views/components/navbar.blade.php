@@ -1,16 +1,34 @@
-<nav class="bg-white shadow">
-    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+<nav class="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
+    <div class="container mx-auto px-6 py-3 flex items-center justify-between">
         <!-- Logo -->
-        <div class="text-2xl font-bold">
-            <a href="{{ route('home') }}"><img src="{{ asset('images/webinasia.svg') }}" alt="webinasia logo" class="h-10 inline"></a>
+        <div class="flex items-center">
+            <a href="{{ route('home') }}" class="transition-transform hover:scale-105">
+                <img src="{{ asset('images/webinasia.svg') }}" alt="webinasia logo" class="h-8 w-auto">
+            </a>
         </div>
 
         <!-- Links -->
-        <div class="ml-7 space-x-6">
-            <a href="{{ route('home') }}" class="text-gray-600 hover:text-blue-600">Home</a>
-            <a href="{{ route('templates.index') }}" class="text-gray-600 hover:text-blue-600">Template</a>
-            <a href="{{ route('about') }}" class="text-gray-600 hover:text-blue-600">About</a>
-            <a href="{{ route('contact') }}" class="text-gray-600 hover:text-blue-600">Contact</a>
+        <div class="flex items-center space-x-8">
+            <a href="{{ route('home') }}"
+               class="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-200 relative group">
+                Home
+                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gray-900 transition-all duration-200 group-hover:w-full"></span>
+            </a>
+            <a href="{{ route('templates.index') }}"
+               class="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-200 relative group">
+                Template
+                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gray-900 transition-all duration-200 group-hover:w-full"></span>
+            </a>
+            <a href="{{ route('about') }}"
+               class="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-200 relative group">
+                About
+                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gray-900 transition-all duration-200 group-hover:w-full"></span>
+            </a>
+            <a href="{{ route('contact') }}"
+               class="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-200 relative group">
+                Contact
+                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gray-900 transition-all duration-200 group-hover:w-full"></span>
+            </a>
         </div>
     </div>
 </nav>
