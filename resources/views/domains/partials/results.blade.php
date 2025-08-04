@@ -263,7 +263,7 @@
     }
 
     function checkWhois(domain) {
-        window.open(`https://whois/whois/${domain}`, '_blank');
+        window.open(`https://who.is/whois/${domain}`, '_blank');
     }
 
     function notifyWhenAvailable(domain) {

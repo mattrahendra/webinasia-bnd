@@ -35,22 +35,99 @@ class DomainController extends Controller
         ]);
 
         $domain = strtolower(trim($request->domain));
-        $extensions = $request->extensions ?? $this->goDaddyService->getAvailableExtensions();
+
+        // Selalu limit ke 5 ekstensi saja untuk kecepatan
+        if (!empty($request->extensions)) {
+            $extensions = array_slice($request->extensions, 0, 5);
+        } else {
+            // Default ke 5 ekstensi paling populer
+            $extensions = $this->goDaddyService->getDefaultSearchExtensions();
+        }
 
         $cacheKey = "domain_search_" . md5($domain . implode(',', $extensions));
 
         $results = Cache::remember($cacheKey, 300, function () use ($domain, $extensions) {
-            return $this->goDaddyService->checkAvailability($domain, $extensions);
+            return $this->goDaddyService->checkAvailability($domain, $extensions, 5);
         });
 
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
-                'results' => $results
+                'results' => $results,
+                'total_checked' => count($results)
             ]);
         }
 
         return view('domains.search', compact('results', 'domain', 'extensions'));
+    }
+
+    /**
+     * Quick domain search endpoint - limited to 5 extensions
+     */
+    public function quickSearch(Request $request)
+    {
+        $request->validate([
+            'domain' => 'required|string|min:1|max:50'
+        ]);
+
+        $domain = strtolower(trim($request->domain));
+
+        $cacheKey = "domain_quick_" . md5($domain);
+
+        try {
+            $results = Cache::remember($cacheKey, 300, function () use ($domain) {
+                return $this->goDaddyService->quickCheckAvailability($domain);
+            });
+
+            return response()->json([
+                'success' => true,
+                'results' => $results,
+                'domain' => $domain,
+                'total_checked' => count($results)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak dapat melakukan pencarian domain',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Check specific extensions (max 5)
+     */
+    public function checkMultipleExtensions(Request $request)
+    {
+        $request->validate([
+            'domain' => 'required|string|min:1|max:50',
+            'extensions' => 'required|array|max:5',
+            'extensions.*' => 'string'
+        ]);
+
+        $domain = strtolower(trim($request->domain));
+        $extensions = array_slice($request->extensions, 0, 5); // Hard limit ke 5
+
+        $cacheKey = "domain_multi_" . md5($domain . implode(',', $extensions));
+
+        try {
+            $results = Cache::remember($cacheKey, 300, function () use ($domain, $extensions) {
+                return $this->goDaddyService->checkAvailability($domain, $extensions, 5);
+            });
+
+            return response()->json([
+                'success' => true,
+                'results' => $results,
+                'domain' => $domain,
+                'total_checked' => count($results)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak dapat melakukan pencarian domain',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function pricing()
@@ -74,10 +151,10 @@ class DomainController extends Controller
         $fullDomain = $domainName . '.' . $extension;
 
         try {
-            // Check availability first
+            // Check availability with single extension for speed
             $availability = $this->goDaddyService->checkAvailability($domainName, [$extension]);
 
-            if (!$availability[0]['available']) {
+            if (empty($availability) || !$availability[0]['available']) {
                 if ($request->ajax()) {
                     return response()->json([
                         'success' => false,
@@ -147,6 +224,18 @@ class DomainController extends Controller
                 'message' => 'Tidak dapat memeriksa ketersediaan domain'
             ], 500);
         }
+    }
+
+    /**
+     * Get limited popular extensions for frontend (hanya 10)
+     */
+    public function getPopularExtensions()
+    {
+        $extensions = array_slice($this->goDaddyService->getPopularExtensions(), 0, 10);
+        return response()->json([
+            'success' => true,
+            'extensions' => $extensions
+        ]);
     }
 
     public function cleanupExpiredReservations()

@@ -1,259 +1,395 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Main Payment Information -->
-        <div class="lg:col-span-2">
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h2 class="text-2xl font-bold mb-6">Payment Details</h2>
+<div class="min-h-screen bg-gradient-to-br from-navy-50 to-custom-blue-50">
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                        <h3 class="text-lg font-semibold mb-4">Order Information</h3>
-                        <div class="space-y-2">
-                            <p><strong>Order Number:</strong> {{ $order->order_number }}</p>
-                            <p><strong>Domain:</strong> {{ $order->domain_name }}.{{ $order->domain_extension }}</p>
-                            <p><strong>Template:</strong> {{ $order->template->name ?? 'N/A' }}</p>
-                            <p><strong>Total Amount:</strong> Rp {{ number_format($order->total_price, 0, ',', '.') }}</p>
-                            <p><strong>Order Status:</strong>
-                                <span id="order-status" class="px-2 py-1 rounded text-sm
-                                    {{ $order->status === 'paid' ? 'bg-green-100 text-green-800' :
-                                       ($order->status === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
-                                    {{ ucfirst($order->status) }}
-                                </span>
-                            </p>
-                        </div>
-                    </div>
 
-                    <div>
-                        <h3 class="text-lg font-semibold mb-4">Payment Information</h3>
-                        <div class="space-y-2">
-                            <p><strong>Payment Method:</strong> {{ ucfirst(str_replace('_', ' ', $payment->payment_method)) }}</p>
-                            <p><strong>Payment Type:</strong> {{ ucfirst($payment->payment_type) }}</p>
-                            <p><strong>Payment Status:</strong>
-                                <span id="payment-status" class="px-2 py-1 rounded text-sm
-                                    {{ in_array($payment->status, ['settlement', 'capture']) ? 'bg-green-100 text-green-800' :
-                                       (in_array($payment->status, ['deny', 'cancel', 'expire', 'failure']) ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
-                                    {{ ucfirst($payment->status) }}
-                                </span>
-                            </p>
-                            <p><strong>Transaction ID:</strong> {{ $payment->transaction_id }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Payment Method Specific Content -->
-                @if($payment->payment_type === 'snap')
-                <!-- Snap Payment -->
-                <div class="mb-6 text-center">
-                    <h3 class="text-lg font-semibold mb-4">Complete Your Payment</h3>
-                    @if(session('redirect_url'))
-                    <div class="space-y-4">
-                        <p class="text-gray-600 mb-4">Click the button below to complete your payment</p>
-                        <button id="pay-button" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-200">
-                            Pay Now - Rp {{ number_format($order->total_price, 0, ',', '.') }}
-                        </button>
-                        <div class="mt-4">
-                            <a href="{{ session('redirect_url') }}" target="_blank" class="text-blue-600 hover:underline">
-                                Open Payment Page in New Tab
-                            </a>
-                        </div>
-                    </div>
-                    @endif
-                </div>
-
-                @elseif($payment->payment_type === 'qris' && isset($payment->payment_data['actions']))
-                <!-- QRIS Payment -->
-                <div class="mb-6 text-center">
-                    <h3 class="text-lg font-semibold mb-4">Scan QR Code to Pay</h3>
-                    <div class="inline-block bg-gray-50 p-4 rounded-lg">
-                        @foreach($payment->payment_data['actions'] as $action)
-                        @if($action['name'] === 'generate-qr-code')
-                        <img src="{{ $action['url'] }}" alt="QR Code" class="mx-auto max-w-xs mb-4">
-                        <p class="text-sm text-gray-600">Scan this QR code with any e-wallet app</p>
-                        <p class="text-xs text-gray-500 mt-2">Payment will expire in 60 minutes</p>
-                        @endif
-                        @endforeach
-                    </div>
-                </div>
-
-                @elseif(in_array($payment->payment_type, ['bank_transfer']) && isset($payment->payment_data['va_numbers']))
-                <!-- Bank Transfer / Virtual Account -->
-                <div class="mb-6 bg-blue-50 p-6 rounded-lg">
-                    <h3 class="text-lg font-semibold mb-4">Bank Transfer Instructions</h3>
-                    <p class="text-sm text-gray-700 mb-4">Please transfer the exact amount to the virtual account number below:</p>
-
-                    @foreach($payment->payment_data['va_numbers'] as $va)
-                    <div class="bg-white p-4 rounded border mb-4">
+    <div class="max-w-7xl mx-auto px-6 py-16">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <!-- Main Payment Information -->
+            <div class="lg:col-span-2">
+                <div class="bg-bone-50 rounded-3xl shadow-xl border-2 border-navy-100 overflow-hidden">
+                    <!-- Payment Status Header -->
+                    <div class="bg-gradient-to-r from-custom-blue-600 to-navy-700 text-bone-50 p-8">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="font-semibold text-lg">{{ strtoupper($va['bank']) }}</p>
-                                <p class="text-2xl font-mono font-bold text-blue-600">{{ $va['va_number'] }}</p>
-                                <p class="text-sm text-gray-600">Virtual Account Number</p>
+                                <h2 class="text-3xl font-black mb-2">Payment Details</h2>
+                                <p class="text-custom-blue-200">Transaction ID: {{ $payment->transaction_id }}</p>
                             </div>
-                            <button onclick="copyToClipboard('{{ $va['va_number'] }}')"
-                                class="px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300">
-                                Copy
-                            </button>
+                            <div class="text-right">
+                                <p class="text-bone-50 text-lg font-semibold mb-2">Payment Status</p>
+                                <span id="payment-status" class="inline-flex items-center px-4 py-3 rounded-2xl text-sm font-bold border-2
+                                    {{ in_array($payment->status, ['settlement', 'capture']) ? 'bg-green-100 text-green-800 border-green-300' :
+                                       (in_array($payment->status, ['deny', 'cancel', 'expire', 'failure']) ? 'bg-red-100 text-red-800 border-red-300' : 'bg-yellow-100 text-yellow-800 border-yellow-300') }}">
+                                    <i class="fas fa-{{ in_array($payment->status, ['settlement', 'capture']) ? 'check-circle' : (in_array($payment->status, ['deny', 'cancel', 'expire', 'failure']) ? 'times-circle' : 'clock') }} mr-2"></i>
+                                    {{ ucfirst($payment->status) }}
+                                </span>
+                            </div>
                         </div>
                     </div>
-                    @endforeach
 
-                    <div class="mt-4 text-sm text-gray-600">
-                        <p><strong>Amount:</strong> Rp {{ number_format($order->total_price, 0, ',', '.') }}</p>
-                        <p><strong>Payment Method:</strong> ATM, Internet Banking, or Mobile Banking</p>
-                        <p class="text-red-600 mt-2"><strong>Important:</strong> Payment must be made within 24 hours</p>
-                    </div>
-                </div>
+                    <div class="p-10">
+                        <!-- Order Information Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                            <div class="bg-gradient-to-r from-custom-blue-50 to-custom-yellow-50 rounded-2xl p-6 border-2 border-custom-blue-200">
+                                <h3 class="text-xl font-black text-navy-900 mb-6 flex items-center">
+                                    <i class="fas fa-shopping-bag mr-3 text-custom-blue-600"></i>
+                                    Order Information
+                                </h3>
+                                <div class="space-y-4">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-navy-600 font-medium">Order Number:</span>
+                                        <span class="font-bold text-navy-900">{{ $order->order_number }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-navy-600 font-medium">Domain:</span>
+                                        <span class="font-bold text-custom-blue-600">{{ $order->domain_name }}.{{ $order->domain_extension }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-navy-600 font-medium">Template:</span>
+                                        <span class="font-bold text-navy-900">{{ $order->template->name ?? 'N/A' }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center pt-4 border-t-2 border-custom-blue-200">
+                                        <span class="text-navy-600 font-medium">Total Amount:</span>
+                                        <span class="font-black text-2xl text-custom-blue-600">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-navy-600 font-medium">Order Status:</span>
+                                        <span id="order-status" class="inline-flex items-center px-3 py-2 rounded-xl text-sm font-bold
+                                            {{ $order->status === 'paid' ? 'bg-green-100 text-green-800' :
+                                               ($order->status === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                            <i class="fas fa-{{ $order->status === 'paid' ? 'check-circle' : ($order->status === 'cancelled' ? 'times-circle' : 'clock') }} mr-2"></i>
+                                            {{ ucfirst($order->status) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
 
-                @elseif($payment->payment_type === 'gopay')
-                <!-- GoPay -->
-                <div class="mb-6 text-center">
-                    <h3 class="text-lg font-semibold mb-4">GoPay Payment</h3>
-                    @if(isset($payment->payment_data['actions']))
-                    @foreach($payment->payment_data['actions'] as $action)
-                    @if($action['name'] === 'generate-qr-code')
-                    <div class="inline-block bg-gray-50 p-4 rounded-lg">
-                        <img src="{{ $action['url'] }}" alt="GoPay QR Code" class="mx-auto max-w-xs mb-4">
-                        <p class="text-sm text-gray-600">Scan with GoPay app</p>
-                    </div>
-                    @elseif($action['name'] === 'deeplink-redirect')
-                    <div class="mt-4">
-                        <a href="{{ $action['url'] }}" class="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700">
-                            Open GoPay App
-                        </a>
-                    </div>
-                    @endif
-                    @endforeach
-                    @endif
-                </div>
+                            <div class="bg-gradient-to-r from-custom-yellow-50 to-custom-blue-50 rounded-2xl p-6 border-2 border-custom-yellow-200">
+                                <h3 class="text-xl font-black text-navy-900 mb-6 flex items-center">
+                                    <i class="fas fa-wallet mr-3 text-custom-yellow-600"></i>
+                                    Payment Information
+                                </h3>
+                                <div class="space-y-4">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-navy-600 font-medium">Payment Method:</span>
+                                        <span class="font-bold text-navy-900">{{ ucfirst(str_replace('_', ' ', $payment->payment_method)) }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-navy-600 font-medium">Payment Type:</span>
+                                        <span class="font-bold text-navy-900">{{ ucfirst($payment->payment_type) }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-navy-600 font-medium">Transaction ID:</span>
+                                        <span class="font-mono text-sm text-navy-700 bg-navy-100 px-3 py-1 rounded-lg">{{ $payment->transaction_id }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                @elseif($payment->payment_type === 'cstore')
-                <!-- Convenience Store -->
-                <div class="mb-6 bg-orange-50 p-6 rounded-lg">
-                    <h3 class="text-lg font-semibold mb-4">
-                        {{ ucfirst($payment->payment_data['store'] ?? 'Convenience Store') }} Payment
-                    </h3>
+                        <!-- Payment Method Specific Content -->
+                        @if($payment->payment_type === 'snap')
+                        <!-- Snap Payment -->
+                        <div class="text-center mb-10">
+                            <div class="bg-gradient-to-r from-custom-blue-600 to-navy-700 rounded-3xl p-10 text-bone-50">
+                                <div class="text-6xl mb-6">
+                                    <i class="fas fa-credit-card text-custom-yellow-400"></i>
+                                </div>
+                                <h3 class="text-2xl font-black mb-6">Complete Your Payment</h3>
+                                @if(session('redirect_url'))
+                                <div class="space-y-6">
+                                    <p class="text-custom-blue-200 text-lg mb-6">Click the button below to complete your payment securely</p>
+                                    <button id="pay-button" class="inline-flex items-center px-10 py-6 bg-gradient-to-r from-custom-yellow-400 to-custom-yellow-500 text-navy-900 font-black text-xl rounded-2xl hover:from-custom-yellow-500 hover:to-custom-yellow-600 transition-all duration-300 hover:scale-110 shadow-2xl hover:shadow-yellow-glow">
+                                        <i class="fas fa-lock mr-4"></i>Pay Now - Rp {{ number_format($order->total_price, 0, ',', '.') }}
+                                    </button>
+                                    <div class="mt-6">
+                                        <a href="{{ session('redirect_url') }}" target="_blank" class="inline-flex items-center text-custom-blue-200 hover:text-bone-50 font-semibold transition-colors duration-300">
+                                            <i class="fas fa-external-link-alt mr-2"></i>Open Payment Page in New Tab
+                                        </a>
+                                    </div>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
 
-                    @if(isset($payment->payment_data['payment_code']))
-                    <div class="bg-white p-4 rounded border">
-                        <p class="font-semibold">Payment Code:</p>
-                        <p class="text-2xl font-mono font-bold text-orange-600">{{ $payment->payment_data['payment_code'] }}</p>
-                        <button onclick="copyToClipboard('{{ $payment->payment_data['payment_code'] }}')"
-                            class="mt-2 px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300">
-                            Copy Code
-                        </button>
-                    </div>
-                    @endif
+                        @elseif($payment->payment_type === 'qris' && isset($payment->payment_data['actions']))
+                        <!-- QRIS Payment -->
+                        <div class="text-center mb-10">
+                            <div class="bg-gradient-to-r from-custom-blue-50 to-custom-yellow-50 rounded-3xl p-10 border-2 border-custom-blue-200">
+                                <div class="text-6xl mb-6">
+                                    <i class="fas fa-qrcode text-custom-blue-600"></i>
+                                </div>
+                                <h3 class="text-2xl font-black text-navy-900 mb-6">Scan QR Code to Pay</h3>
+                                <div class="inline-block bg-bone-50 p-6 rounded-2xl border-2 border-navy-200 shadow-xl">
+                                    @foreach($payment->payment_data['actions'] as $action)
+                                    @if($action['name'] === 'generate-qr-code')
+                                    <img src="{{ $action['url'] }}" alt="QR Code" class="mx-auto max-w-xs mb-4 rounded-lg">
+                                    <p class="text-navy-600 font-semibold mb-2">Scan this QR code with any e-wallet app</p>
+                                    <p class="text-sm text-navy-500 bg-yellow-100 px-4 py-2 rounded-lg">Payment will expire in 60 minutes</p>
+                                    @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="mt-4 text-sm text-gray-600">
-                        <p>1. Go to the nearest {{ ucfirst($payment->payment_data['store'] ?? 'convenience store') }}</p>
-                        <p>2. Show the payment code to the cashier</p>
-                        <p>3. Pay the exact amount: Rp {{ number_format($order->total_price, 0, ',', '.') }}</p>
-                        <p class="text-red-600 mt-2"><strong>Payment expires in 3 days</strong></p>
-                    </div>
-                </div>
-                @endif
+                        @elseif(in_array($payment->payment_type, ['bank_transfer']) && isset($payment->payment_data['va_numbers']))
+                        <!-- Bank Transfer / Virtual Account -->
+                        <div class="mb-10">
+                            <div class="bg-gradient-to-r from-custom-blue-50 to-custom-yellow-50 rounded-3xl p-10 border-2 border-custom-blue-200">
+                                <div class="text-center mb-8">
+                                    <div class="text-6xl mb-4">
+                                        <i class="fas fa-university text-custom-blue-600"></i>
+                                    </div>
+                                    <h3 class="text-2xl font-black text-navy-900 mb-4">Bank Transfer Instructions</h3>
+                                    <p class="text-navy-600 text-lg">Please transfer the exact amount to the virtual account number below</p>
+                                </div>
 
-                <!-- Action Buttons -->
-                <div class="flex flex-wrap gap-3 mt-6">
-                    <a href="{{ route('home') }}" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition duration-200">
-                        Back to Home
-                    </a>
-                    <button onclick="checkPaymentStatus()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-200">
-                        <span id="check-status-text">Check Payment Status</span>
-                    </button>
-                    @if(in_array($payment->status, ['pending']))
-                    <button onclick="cancelPayment()" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-200">
-                        Cancel Payment
-                    </button>
-                    @endif
+                                @foreach($payment->payment_data['va_numbers'] as $va)
+                                <div class="bg-bone-50 rounded-2xl p-8 border-2 border-navy-200 mb-6 shadow-lg">
+                                    <div class="flex items-center justify-between">
+                                        <div class="text-center flex-1">
+                                            <p class="text-2xl font-black text-navy-900 mb-2">{{ strtoupper($va['bank']) }}</p>
+                                            <p class="text-4xl font-mono font-black text-custom-blue-600 mb-2">{{ $va['va_number'] }}</p>
+                                            <p class="text-navy-600 font-semibold">Virtual Account Number</p>
+                                        </div>
+                                        <button onclick="copyToClipboard('{{ $va['va_number'] }}')"
+                                            class="ml-6 px-6 py-4 bg-gradient-to-r from-custom-yellow-400 to-custom-yellow-500 text-navy-900 font-bold rounded-2xl hover:from-custom-yellow-500 hover:to-custom-yellow-600 transition-all duration-300 hover:scale-110 shadow-lg">
+                                            <i class="fas fa-copy mr-2"></i>Copy
+                                        </button>
+                                    </div>
+                                </div>
+                                @endforeach
 
-                    @if(config('services.midtrans.sandbox') && in_array($payment->status, ['pending']))
-                    <button onclick="manualPayment()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition duration-200">
-                        <span id="manual-pay-text">✓ Bayar (Simulasi)</span>
-                    </button>
-                    @endif
-                </div>
-            </div>
-        </div>
+                                <div class="bg-yellow-100 rounded-2xl p-6 border-2 border-yellow-300">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-navy-700">
+                                        <div>
+                                            <p class="font-bold text-lg mb-2"><i class="fas fa-money-bill mr-2 text-yellow-600"></i>Amount:</p>
+                                            <p class="text-2xl font-black text-custom-blue-600">Rp {{ number_format($order->total_price, 0, ',', '.') }}</p>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-lg mb-2"><i class="fas fa-credit-card mr-2 text-yellow-600"></i>Payment Method:</p>
+                                            <p class="font-semibold">ATM, Internet Banking, or Mobile Banking</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-6 p-4 bg-red-100 rounded-xl border-2 border-red-300">
+                                        <p class="text-red-700 font-bold text-center">
+                                            <i class="fas fa-exclamation-triangle mr-2"></i>Important: Payment must be made within 24 hours
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-        <!-- Sidebar with Sandbox Instructions -->
-        <div class="lg:col-span-1">
-            @if(config('services.midtrans.sandbox'))
-            <div class="bg-yellow-50 border border-yellow-200 p-6 rounded-lg mb-6">
-                <h3 class="text-lg font-semibold text-yellow-800 mb-4">🧪 Sandbox Mode</h3>
-                <p class="text-sm text-yellow-700 mb-4">This is a test environment. No real money will be charged.</p>
+                        @elseif($payment->payment_type === 'gopay')
+                        <!-- GoPay -->
+                        <div class="text-center mb-10">
+                            <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-3xl p-10 border-2 border-green-300">
+                                <div class="text-6xl mb-6">
+                                    <i class="fab fa-google-wallet text-green-600"></i>
+                                </div>
+                                <h3 class="text-2xl font-black text-navy-900 mb-6">GoPay Payment</h3>
+                                @if(isset($payment->payment_data['actions']))
+                                @foreach($payment->payment_data['actions'] as $action)
+                                @if($action['name'] === 'generate-qr-code')
+                                <div class="inline-block bg-bone-50 p-6 rounded-2xl border-2 border-navy-200 shadow-xl mb-6">
+                                    <img src="{{ $action['url'] }}" alt="GoPay QR Code" class="mx-auto max-w-xs mb-4 rounded-lg">
+                                    <p class="text-navy-600 font-semibold">Scan with GoPay app</p>
+                                </div>
+                                @elseif($action['name'] === 'deeplink-redirect')
+                                <div class="mt-6">
+                                    <a href="{{ $action['url'] }}" class="inline-flex items-center px-10 py-6 bg-gradient-to-r from-green-600 to-green-700 text-bone-50 font-black text-xl rounded-2xl hover:from-green-700 hover:to-green-800 transition-all duration-300 hover:scale-110 shadow-2xl">
+                                        <i class="fab fa-google-wallet mr-4"></i>Open GoPay App
+                                    </a>
+                                </div>
+                                @endif
+                                @endforeach
+                                @endif
+                            </div>
+                        </div>
 
-                @if(!empty($sandboxInstructions))
-                <div class="space-y-3">
-                    @if(isset($sandboxInstructions['title']))
-                    <h4 class="font-semibold text-yellow-800">{{ $sandboxInstructions['title'] }}</h4>
-                    @endif
+                        @elseif($payment->payment_type === 'cstore')
+                        <!-- Convenience Store -->
+                        <div class="mb-10">
+                            <div class="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-3xl p-10 border-2 border-orange-300">
+                                <div class="text-center mb-8">
+                                    <div class="text-6xl mb-4">
+                                        <i class="fas fa-store text-orange-600"></i>
+                                    </div>
+                                    <h3 class="text-2xl font-black text-navy-900 mb-4">
+                                        {{ ucfirst($payment->payment_data['store'] ?? 'Convenience Store') }} Payment
+                                    </h3>
+                                </div>
 
-                    @if(isset($sandboxInstructions['cards']))
-                    <div class="text-xs space-y-1">
-                        <p><strong>Success Card:</strong> {{ $sandboxInstructions['cards']['visa_success'] }}</p>
-                        <p><strong>Failure Card:</strong> {{ $sandboxInstructions['cards']['visa_failure'] }}</p>
-                        <p><strong>CVV:</strong> {{ $sandboxInstructions['cvv'] }}</p>
-                        <p><strong>Expiry:</strong> {{ $sandboxInstructions['expiry'] }}</p>
-                        <p><strong>OTP:</strong> {{ $sandboxInstructions['otp'] }}</p>
-                    </div>
-                    @endif
+                                @if(isset($payment->payment_data['payment_code']))
+                                <div class="bg-bone-50 rounded-2xl p-8 border-2 border-navy-200 mb-6 shadow-lg text-center">
+                                    <p class="text-xl font-bold text-navy-900 mb-4">Payment Code:</p>
+                                    <p class="text-5xl font-mono font-black text-orange-600 mb-6">{{ $payment->payment_data['payment_code'] }}</p>
+                                    <button onclick="copyToClipboard('{{ $payment->payment_data['payment_code'] }}')"
+                                        class="px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-bone-50 font-bold rounded-2xl hover:from-orange-600 hover:to-orange-700 transition-all duration-300 hover:scale-110 shadow-lg">
+                                        <i class="fas fa-copy mr-3"></i>Copy Code
+                                    </button>
+                                </div>
+                                @endif
 
-                    @if(isset($sandboxInstructions['phone']))
-                    <p class="text-xs"><strong>Test Phone:</strong> {{ $sandboxInstructions['phone'] }}</p>
-                    <p class="text-xs"><strong>Test PIN:</strong> {{ $sandboxInstructions['pin'] }}</p>
-                    @endif
-
-                    @if(isset($sandboxInstructions['note']))
-                    <p class="text-xs text-yellow-600">{{ $sandboxInstructions['note'] }}</p>
-                    @endif
-                </div>
-                @endif
-            </div>
-            @endif
-
-            <!-- Order Summary -->
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h3 class="text-lg font-semibold mb-4">Order Summary</h3>
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between">
-                        <span>Template ({{ $order->template->name ?? 'N/A' }})</span>
-                        <span>Rp {{ number_format($order->template_price, 0, ',', '.') }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Domain ({{ $order->domain_name }}.{{ $order->domain_extension }})</span>
-                        <span>Rp {{ number_format($order->domain_price, 0, ',', '.') }}</span>
-                    </div>
-                    @if($order->total_price < ($order->template_price + $order->domain_price))
-                        <div class="flex justify-between text-green-600">
-                            <span>Discount</span>
-                            <span>-Rp {{ number_format(($order->template_price + $order->domain_price) - $order->total_price, 0, ',', '.') }}</span>
+                                <div class="bg-orange-100 rounded-2xl p-6 border-2 border-orange-300">
+                                    <div class="space-y-4 text-navy-700">
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-bone-50 rounded-full flex items-center justify-center mr-4 font-bold">1</span>
+                                            <span class="font-semibold">Go to the nearest {{ ucfirst($payment->payment_data['store'] ?? 'convenience store') }}</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-bone-50 rounded-full flex items-center justify-center mr-4 font-bold">2</span>
+                                            <span class="font-semibold">Show the payment code to the cashier</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-bone-50 rounded-full flex items-center justify-center mr-4 font-bold">3</span>
+                                            <span class="font-semibold">Pay the exact amount: <span class="text-orange-700 font-black">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span></span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-6 p-4 bg-red-100 rounded-xl border-2 border-red-300">
+                                        <p class="text-red-700 font-bold text-center">
+                                            <i class="fas fa-clock mr-2"></i>Payment expires in 3 days
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         @endif
-                        <hr class="my-2">
-                        <div class="flex justify-between font-semibold">
-                            <span>Total</span>
-                            <span>Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-wrap gap-4 justify-center">
+                            <a href="{{ route('home') }}" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-navy-200 to-navy-300 text-navy-700 font-bold rounded-2xl hover:from-navy-300 hover:to-navy-400 transition-all duration-300 hover:scale-110 shadow-lg">
+                                <i class="fas fa-home mr-3"></i>Back to Home
+                            </a>
+
+                            @if(in_array($payment->status, ['pending']))
+                            <button onclick="cancelPayment()" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-red-500 to-red-600 text-bone-50 font-bold rounded-2xl hover:from-red-600 hover:to-red-700 transition-all duration-300 hover:scale-110 shadow-lg">
+                                <i class="fas fa-times mr-3"></i>Cancel Payment
+                            </button>
+                            @endif
+
+                            @if(config('services.midtrans.sandbox') && in_array($payment->status, ['pending']))
+                            <button onclick="manualPayment()" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-bone-50 font-bold rounded-2xl hover:from-green-600 hover:to-green-700 transition-all duration-300 hover:scale-110 shadow-lg">
+                                <span id="manual-pay-text"><i class="fas fa-check mr-3"></i>Bayar (Simulasi)</span>
+                            </button>
+                            @endif
                         </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Customer Information -->
-            <div class="bg-white p-6 rounded-lg shadow-md mt-6">
-                <h3 class="text-lg font-semibold mb-4">Customer Information</h3>
-                <div class="space-y-2 text-sm">
-                    <p><strong>Name:</strong> {{ $order->customer_data['name'] }}</p>
-                    <p><strong>Email:</strong> {{ $order->customer_data['email'] }}</p>
-                    <p><strong>Phone:</strong> {{ $order->customer_data['phone'] }}</p>
-                    @if(isset($order->customer_data['address']))
-                    <p><strong>Address:</strong> {{ $order->customer_data['address'] }}</p>
+            <!-- Sidebar -->
+            <div class="lg:col-span-1 space-y-8">
+                @if(config('services.midtrans.sandbox'))
+                <!-- Sandbox Instructions -->
+                <div class="bg-yellow-50 border-2 border-yellow-300 rounded-3xl p-8 shadow-xl">
+                    <div class="text-center mb-6">
+                        <div class="text-4xl mb-4">
+                            <i class="fas fa-flask text-yellow-600"></i>
+                        </div>
+                        <h3 class="text-xl font-black text-yellow-800">🧪 Sandbox Mode</h3>
+                        <p class="text-yellow-700 font-medium mt-2">This is a test environment. No real money will be charged.</p>
+                    </div>
+
+                    @if(!empty($sandboxInstructions))
+                    <div class="space-y-4">
+                        @if(isset($sandboxInstructions['title']))
+                        <h4 class="font-bold text-yellow-800 text-lg">{{ $sandboxInstructions['title'] }}</h4>
+                        @endif
+
+                        @if(isset($sandboxInstructions['cards']))
+                        <div class="bg-yellow-100 rounded-2xl p-4 text-sm space-y-2">
+                            <p><strong>Success Card:</strong> <span class="font-mono">{{ $sandboxInstructions['cards']['visa_success'] }}</span></p>
+                            <p><strong>Failure Card:</strong> <span class="font-mono">{{ $sandboxInstructions['cards']['visa_failure'] }}</span></p>
+                            <p><strong>CVV:</strong> <span class="font-mono">{{ $sandboxInstructions['cvv'] }}</span></p>
+                            <p><strong>Expiry:</strong> <span class="font-mono">{{ $sandboxInstructions['expiry'] }}</span></p>
+                            <p><strong>OTP:</strong> <span class="font-mono">{{ $sandboxInstructions['otp'] }}</span></p>
+                        </div>
+                        @endif
+
+                        @if(isset($sandboxInstructions['phone']))
+                        <div class="bg-yellow-100 rounded-2xl p-4 text-sm">
+                            <p><strong>Test Phone:</strong> <span class="font-mono">{{ $sandboxInstructions['phone'] }}</span></p>
+                            <p><strong>Test PIN:</strong> <span class="font-mono">{{ $sandboxInstructions['pin'] }}</span></p>
+                        </div>
+                        @endif
+
+                        @if(isset($sandboxInstructions['note']))
+                        <p class="text-sm text-yellow-700 bg-yellow-100 rounded-xl p-3">{{ $sandboxInstructions['note'] }}</p>
+                        @endif
+                    </div>
                     @endif
-                    @if(isset($order->customer_data['city']))
-                    <p><strong>City:</strong> {{ $order->customer_data['city'] }}</p>
-                    @endif
+                </div>
+                @endif
+
+                <!-- Order Summary -->
+                <div class="bg-bone-50 rounded-3xl shadow-xl border-2 border-navy-100 p-8">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-custom-blue-600 to-navy-700 rounded-full mb-4">
+                            <i class="fas fa-receipt text-bone-50 text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-navy-900">Order Summary</h3>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-4 bg-gradient-to-r from-custom-blue-50 to-custom-yellow-50 rounded-2xl border border-custom-blue-200">
+                            <span class="text-navy-600 font-medium">Template ({{ $order->template->name ?? 'N/A' }})</span>
+                            <span class="font-bold text-navy-900">Rp {{ number_format($order->template_price, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between items-center p-4 bg-gradient-to-r from-custom-blue-50 to-custom-yellow-50 rounded-2xl border border-custom-blue-200">
+                            <span class="text-navy-600 font-medium">Domain ({{ $order->domain_name }}.{{ $order->domain_extension }})</span>
+                            <span class="font-bold text-navy-900">Rp {{ number_format($order->domain_price, 0, ',', '.') }}</span>
+                        </div>
+                        @if($order->total_price < ($order->template_price + $order->domain_price))
+                        <div class="flex justify-between items-center p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-2xl border border-green-200">
+                            <span class="text-green-600 font-medium">Discount</span>
+                            <span class="font-bold text-green-700">-Rp {{ number_format(($order->template_price + $order->domain_price) - $order->total_price, 0, ',', '.') }}</span>
+                        </div>
+                        @endif
+                        <div class="border-t-2 border-navy-200 pt-4">
+                            <div class="flex justify-between items-center p-4 bg-gradient-to-r from-custom-blue-600 to-navy-700 rounded-2xl text-bone-50">
+                                <span class="font-bold text-xl">Total</span>
+                                <span class="font-black text-2xl">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Information -->
+                <div class="bg-bone-50 rounded-3xl shadow-xl border-2 border-navy-100 p-8">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-custom-yellow-500 to-custom-yellow-600 rounded-full mb-4">
+                            <i class="fas fa-user text-bone-50 text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-navy-900">Customer Information</h3>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="p-4 bg-gradient-to-r from-custom-yellow-50 to-custom-blue-50 rounded-2xl border border-custom-yellow-200">
+                            <p class="text-navy-600 font-medium mb-1">Name</p>
+                            <p class="font-bold text-navy-900">{{ $order->customer_data['name'] }}</p>
+                        </div>
+                        <div class="p-4 bg-gradient-to-r from-custom-yellow-50 to-custom-blue-50 rounded-2xl border border-custom-yellow-200">
+                            <p class="text-navy-600 font-medium mb-1">Email</p>
+                            <p class="font-bold text-navy-900">{{ $order->customer_data['email'] }}</p>
+                        </div>
+                        <div class="p-4 bg-gradient-to-r from-custom-yellow-50 to-custom-blue-50 rounded-2xl border border-custom-yellow-200">
+                            <p class="text-navy-600 font-medium mb-1">Phone</p>
+                            <p class="font-bold text-navy-900">{{ $order->customer_data['phone'] }}</p>
+                        </div>
+                        @if(isset($order->customer_data['address']))
+                        <div class="p-4 bg-gradient-to-r from-custom-yellow-50 to-custom-blue-50 rounded-2xl border border-custom-yellow-200">
+                            <p class="text-navy-600 font-medium mb-1">Address</p>
+                            <p class="font-bold text-navy-900">{{ $order->customer_data['address'] }}</p>
+                        </div>
+                        @endif
+                        @if(isset($order->customer_data['city']))
+                        <div class="p-4 bg-gradient-to-r from-custom-yellow-50 to-custom-blue-50 rounded-2xl border border-custom-yellow-200">
+                            <p class="text-navy-600 font-medium mb-1">City</p>
+                            <p class="font-bold text-navy-900">{{ $order->customer_data['city'] }}</p>
+                        </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -271,7 +407,6 @@
         type: '{{ $payment->payment_type }}',
         status: '{{ $payment->status }}',
         token: '{{ $payment->payment_data["token"] ?? "" }}',
-        checkStatusUrl: '{{ route("api.orders.payment-status", ["order" => $order->id]) }}',
         homeUrl: '{{ route("home") }}',
         csrfToken: '{{ csrf_token() }}',
         isPending: {{ in_array($payment->status, ['pending']) ? 'true' : 'false' }}
@@ -283,72 +418,29 @@
             snap.pay(paymentData.token, {
                 onSuccess: function(result) {
                     console.log('Payment success:', result);
-                    checkPaymentStatus();
+                    showMessage('Payment successful! Your order has been confirmed.', 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
                 },
                 onPending: function(result) {
                     console.log('Payment pending:', result);
-                    checkPaymentStatus();
+                    showMessage('Payment is being processed. Please wait...', 'info');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
                 },
                 onError: function(result) {
                     console.log('Payment error:', result);
-                    checkPaymentStatus();
+                    showMessage('Payment failed. Please try again.', 'error');
                 }
             });
         };
     }
 
-    // Check payment status
-    function checkPaymentStatus() {
-        const checkButton = document.getElementById('check-status-text');
-        checkButton.textContent = 'Checking...';
-
-        fetch(paymentData.checkStatusUrl, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': paymentData.csrfToken
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update status displays
-                    const paymentStatus = document.getElementById('payment-status');
-                    const orderStatus = document.getElementById('order-status');
-
-                    // Update payment status
-                    paymentStatus.textContent = data.status.charAt(0).toUpperCase() + data.status.slice(1);
-                    paymentStatus.className = 'px-2 py-1 rounded text-sm ' + getStatusClass(data.status);
-
-                    // Update order status
-                    orderStatus.textContent = data.order_status.charAt(0).toUpperCase() + data.order_status.slice(1);
-                    orderStatus.className = 'px-2 py-1 rounded text-sm ' + getStatusClass(data.order_status);
-
-                    // Show success message if paid
-                    if (data.status === 'settlement' || data.status === 'capture' || data.order_status === 'paid') {
-                        showMessage('Payment successful! Your order has been confirmed.', 'success');
-                        // Stop auto-refresh when payment is complete
-                        if (window.autoRefreshInterval) {
-                            clearInterval(window.autoRefreshInterval);
-                        }
-                    }
-                } else {
-                    showMessage(data.message, 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showMessage('Error checking payment status', 'error');
-            })
-            .finally(() => {
-                checkButton.textContent = 'Check Payment Status';
-            });
-    }
-
     // Cancel payment
     function cancelPayment() {
         if (confirm('Are you sure you want to cancel this payment?')) {
-            // Implementation for cancelling payment
             window.location.href = paymentData.homeUrl;
         }
     }
@@ -374,60 +466,55 @@
         });
     }
 
-    // Get status CSS class
-    function getStatusClass(status) {
-        if (['settlement', 'capture', 'paid'].includes(status)) {
-            return 'bg-green-100 text-green-800';
-        } else if (['deny', 'cancel', 'expire', 'failure', 'cancelled'].includes(status)) {
-            return 'bg-red-100 text-red-800';
-        } else {
-            return 'bg-yellow-100 text-yellow-800';
-        }
-    }
-
     // Show message
     function showMessage(message, type) {
         const alertClass = type === 'success' ? 'bg-green-100 border-green-400 text-green-700' :
             type === 'error' ? 'bg-red-100 border-red-400 text-red-700' :
-            'bg-blue-100 border-blue-400 text-blue-700';
+            type === 'info' ? 'bg-blue-100 border-blue-400 text-blue-700' :
+            'bg-yellow-100 border-yellow-400 text-yellow-700';
+
+        const iconClass = type === 'success' ? 'fas fa-check-circle' :
+            type === 'error' ? 'fas fa-times-circle' :
+            type === 'info' ? 'fas fa-info-circle' :
+            'fas fa-exclamation-triangle';
 
         const messageDiv = document.createElement('div');
-        messageDiv.className = `border px-4 py-3 rounded mb-4 relative ${alertClass}`;
+        messageDiv.className = `fixed top-6 right-6 max-w-md border-2 px-6 py-4 rounded-2xl shadow-2xl z-50 ${alertClass}`;
         messageDiv.innerHTML = `
-        <span class="block sm:inline">${message}</span>
-        <span class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer" onclick="this.parentElement.remove()">
-            <svg class="fill-current h-6 w-6" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                <title>Close</title>
-                <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
-            </svg>
-        </span>
+        <div class="flex items-center">
+            <i class="${iconClass} text-2xl mr-4"></i>
+            <div class="flex-1">
+                <span class="font-bold">${message}</span>
+            </div>
+            <button class="ml-4 text-xl hover:scale-110 transition-transform duration-200" onclick="this.parentElement.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
     `;
 
-        const container = document.querySelector('.max-w-6xl');
-        container.insertBefore(messageDiv, container.firstChild);
+        document.body.appendChild(messageDiv);
 
-        // Auto-hide success messages after 5 seconds
-        if (type === 'success') {
-            setTimeout(() => {
-                if (messageDiv.parentNode) {
-                    messageDiv.remove();
-                }
-            }, 5000);
-        }
+        // Auto-hide messages after 5 seconds
+        setTimeout(() => {
+            if (messageDiv.parentNode) {
+                messageDiv.remove();
+            }
+        }, 5000);
     }
 
-    // Auto-refresh for pending payments
+    // Auto-refresh for pending payments (every 30 seconds)
     if (paymentData.isPending) {
         let autoRefreshInterval = setInterval(function() {
             const paymentStatusElement = document.getElementById('payment-status');
-            const currentStatus = paymentStatusElement.textContent.toLowerCase();
+            const currentStatus = paymentStatusElement.textContent.toLowerCase().trim();
 
             if (['pending'].includes(currentStatus)) {
-                checkPaymentStatus();
+                // Just reload the page to get updated status
+                window.location.reload();
             } else {
                 clearInterval(autoRefreshInterval);
             }
-        }, 10000); // Check every 10 seconds
+        }, 30000); // Check every 30 seconds
 
         // Store interval globally so it can be accessed from other functions
         window.autoRefreshInterval = autoRefreshInterval;
@@ -443,9 +530,9 @@
             return;
         }
 
-        const manualButton = document.getElementById('manual-pay-text');
-        const originalText = manualButton.textContent;
-        manualButton.textContent = 'Processing...';
+        const manualButton = document.querySelector('#manual-pay-text');
+        const originalText = manualButton.innerHTML;
+        manualButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-3"></i>Processing...';
 
         fetch(`/orders/{{ $order->id }}/manual-payment`, {
                 method: 'POST',
@@ -463,12 +550,12 @@
                     const orderStatus = document.getElementById('order-status');
 
                     // Update payment status
-                    paymentStatus.textContent = 'Settlement';
-                    paymentStatus.className = 'px-2 py-1 rounded text-sm bg-green-100 text-green-800';
+                    paymentStatus.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Settlement';
+                    paymentStatus.className = 'inline-flex items-center px-4 py-3 rounded-2xl text-sm font-bold border-2 bg-green-100 text-green-800 border-green-300';
 
                     // Update order status
-                    orderStatus.textContent = 'Paid';
-                    orderStatus.className = 'px-2 py-1 rounded text-sm bg-green-100 text-green-800';
+                    orderStatus.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Paid';
+                    orderStatus.className = 'inline-flex items-center px-3 py-2 rounded-xl text-sm font-bold bg-green-100 text-green-800';
 
                     // Show success message
                     showMessage(data.message, 'success');
@@ -482,14 +569,102 @@
                     }
                 } else {
                     showMessage(data.message, 'error');
-                    manualButton.textContent = originalText;
+                    manualButton.innerHTML = originalText;
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 showMessage('Error processing manual payment', 'error');
-                manualButton.textContent = originalText;
+                manualButton.innerHTML = originalText;
             });
     }
 </script>
+
+<!-- Custom Styles -->
+<style>
+    /* Smooth transitions for all elements */
+    * {
+        transition: all 0.3s ease;
+    }
+
+    /* Button hover effects */
+    button:hover:not(:disabled), a:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Card hover animations */
+    .lg\:col-span-1 > div {
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .lg\:col-span-1 > div:hover {
+        transform: translateY(-5px);
+    }
+
+    /* QR Code and payment method animations */
+    img {
+        transition: all 0.3s ease;
+    }
+
+    img:hover {
+        transform: scale(1.05);
+    }
+
+    /* Status badge animations */
+    #payment-status, #order-status {
+        transition: all 0.5s ease;
+    }
+
+    /* Loading animation for buttons */
+    .fa-spinner {
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    /* Custom shadow effects */
+    .shadow-yellow-glow {
+        box-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
+    }
+
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+        .grid-cols-1.md\:grid-cols-2 {
+            grid-template-columns: 1fr;
+        }
+
+        .text-4xl.md\:text-5xl {
+            font-size: 2.5rem;
+        }
+
+        .px-10 {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+
+        .py-6 {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+    }
+
+    /* Animation for page load */
+    .lg\:col-span-2, .lg\:col-span-1 {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
 @endsection

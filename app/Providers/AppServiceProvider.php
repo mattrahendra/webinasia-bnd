@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Filament\Pages\Dashboard;
+use Filament\Facades\Filament;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider

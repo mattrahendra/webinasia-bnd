@@ -26,6 +26,33 @@ class GoDaddyService
     }
 
     /**
+     * Get default extensions for quick search (limited to 5 most popular)
+     */
+    public function getDefaultSearchExtensions(): array
+    {
+        return ['com', 'net', 'org', 'id', 'co.id'];
+    }
+
+    /**
+     * Get popular extensions for search (priority extensions)
+     */
+    public function getPopularExtensions(): array
+    {
+        return [
+            'com',
+            'net',
+            'org',
+            'id',
+            'co.id',
+            'web.id',
+            'info',
+            'biz',
+            'co',
+            'me'
+        ];
+    }
+
+    /**
      * Get all available extensions
      */
     public function getAvailableExtensions(): array
@@ -139,10 +166,22 @@ class GoDaddyService
     }
 
     /**
-     * Check domain availability
+     * Quick domain availability check (limited to 5 extensions for speed)
      */
-    public function checkAvailability(string $domain, array $extensions): array
+    public function quickCheckAvailability(string $domain): array
     {
+        return $this->checkAvailability($domain, $this->getDefaultSearchExtensions());
+    }
+
+    /**
+     * Check domain availability with optional limit
+     */
+    public function checkAvailability(string $domain, array $extensions, int $limit = null): array
+    {
+        // Apply limit if specified
+        if ($limit) {
+            $extensions = array_slice($extensions, 0, $limit);
+        }
 
         $results = [];
 
@@ -150,7 +189,7 @@ class GoDaddyService
             $fullDomain = $domain . '.' . $extension;
 
             try {
-                $response = Http::withHeaders([
+                $response = Http::timeout(10)->withHeaders([
                     'Authorization' => 'sso-key ' . $this->apiKey . ':' . $this->apiSecret,
                     'Content-Type' => 'application/json'
                 ])->get($this->baseUrl . '/v1/domains/available', [
@@ -162,7 +201,7 @@ class GoDaddyService
                     $data = $response->json();
                     $rawPrice = $data['price'] ?? 0;
                     $usd = $rawPrice / 1000000;
-                    $idr = $this->convertToIdr($usd); // GoDaddy API returns price in cents
+                    $idr = $this->convertToIdr($usd);
 
                     $results[] = [
                         'domain' => $fullDomain,
@@ -171,35 +210,50 @@ class GoDaddyService
                         'price_usd' => $usd,
                         'price_idr' => $idr,
                         'price_formatted' => $this->formatPrice($usd),
-                        'price' => $idr
+                        'price' => $idr,
+                        'popular' => in_array($extension, ['com', 'net', 'org'])
                     ];
                 } else {
+                    // Skip failed requests for speed
+                    Log::warning('GoDaddy API failed for domain: ' . $fullDomain . ' - Status: ' . $response->status());
+                    continue;
+                }
+            } catch (\Exception $e) {
+                Log::error('GoDaddy API Error for ' . $fullDomain . ': ' . $e->getMessage());
+
+                // Use fallback only for popular extensions
+                if (in_array($extension, $this->getDefaultSearchExtensions())) {
+                    $usdPrice = $this->getDefaultPrice($extension);
                     $results[] = [
                         'domain' => $fullDomain,
                         'extension' => $extension,
-                        'available' => false,
-                        'error' => 'API Error: ' . $response->status()
+                        'available' => true,
+                        'price_usd' => $usdPrice,
+                        'price_idr' => $this->convertToIdr($usdPrice),
+                        'price_formatted' => $this->formatPrice($usdPrice),
+                        'price' => $this->convertToIdr($usdPrice),
+                        'fallback' => true,
+                        'popular' => true
                     ];
                 }
-            } catch (\Exception $e) {
-                Log::error('GoDaddy API Error: ' . $e->getMessage());
-                $usdPrice = $this->getDefaultPrice($extension);
-
-                $results[] = [
-                    'domain' => $fullDomain,
-                    'extension' => $extension,
-                    'available' => true, // fallback to true for demo
-                    'price_usd' => $usdPrice,
-                    'price_idr' => $this->convertToIdr($usdPrice),
-                    'price_formatted' => $this->formatPrice($usdPrice),
-                    'price' => $this->convertToIdr($usdPrice),
-                    'fallback' => true
-                ];
             }
         }
 
-        return $results;
+        // Sort results: available first, then by popularity, then by price
+        usort($results, function ($a, $b) {
+            if ($a['available'] && !$b['available']) return -1;
+            if (!$a['available'] && $b['available']) return 1;
 
+            $aPopular = $a['popular'] ?? false;
+            $bPopular = $b['popular'] ?? false;
+
+            if ($aPopular && !$bPopular) return -1;
+            if (!$aPopular && $bPopular) return 1;
+
+            return $a['price_idr'] <=> $b['price_idr'];
+        });
+
+        return $results;
     }
 
     /**

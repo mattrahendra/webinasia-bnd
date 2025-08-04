@@ -289,24 +289,6 @@
                     this.parentElement.classList.remove('ring-2', 'ring-custom-blue-300');
                 });
             });
-
-            // Add loading states to buttons
-            const buttons = document.querySelectorAll('button[type="submit"], .btn-submit');
-            buttons.forEach(function(button) {
-                button.addEventListener('click', function() {
-                    if (this.form && this.form.checkValidity()) {
-                        const originalText = this.innerHTML;
-                        this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
-                        this.disabled = true;
-
-                        // Re-enable button after 10 seconds as fallback
-                        setTimeout(() => {
-                            this.innerHTML = originalText;
-                            this.disabled = false;
-                        }, 10000);
-                    }
-                });
-            });
         });
 
         // Smooth page transitions
@@ -371,5 +353,6 @@
             });
         }
     </script>
+    @stack('scripts')
 </body>
 </html>

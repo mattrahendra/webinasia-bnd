@@ -7,7 +7,7 @@
     <!-- Hero Section with Domain Search -->
     <section class="relative overflow-hidden bg-gradient-to-br from-navy-950 via-navy-900 to-custom-blue-900 text-bone-50 py-32">
         <!-- Background Pattern -->
-        <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23fbbf24" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=" 60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" %3E%3Cg fill="none" fill-rule="evenodd" %3E%3Cg fill="%23fbbf24" fill-opacity="0.1" %3E%3Ccircle cx="30" cy="30" r="2" /%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
 
         <div class="container mx-auto px-6 relative z-10">
             <div class="text-center max-w-5xl mx-auto">
@@ -21,17 +21,19 @@
                     Secure your online presence with our premium domains and professional templates
                 </p>
 
-                <!-- Domain Search Form -->
+                <!-- Domain Search Form - Simple Version -->
                 <div class="max-w-4xl mx-auto mb-12">
                     <form action="{{ route('domains.search') }}" method="GET" class="flex flex-col sm:flex-row gap-6 sm:gap-0">
                         <div class="relative flex-grow">
                             <i class="fas fa-search absolute left-6 top-1/2 transform -translate-y-1/2 text-navy-400 text-xl"></i>
-                            <input type="text" name="domain" placeholder="Enter your dream domain name..."
+                            <input type="text"
+                                name="domain"
+                                placeholder="Enter your dream domain name..."
                                 class="w-full pl-16 pr-6 py-6 rounded-2xl sm:rounded-r-none sm:rounded-l-2xl border-0 focus:ring-4 focus:ring-custom-yellow-400/50 text-navy-800 text-xl shadow-2xl bg-bone-50 placeholder-navy-400 font-medium"
                                 required>
                         </div>
                         <button type="submit"
-                            class="bg-gradient-to-r from-custom-yellow-400 via-custom-yellow-500 to-custom-yellow-600 text-navy-900 px-10 py-6 rounded-2xl sm:rounded-l-none sm:rounded-r-2xl hover:from-custom-yellow-500 hover:to-custom-yellow-700 font-bold text-xl shadow-2xl transform hover:scale-105 transition-all duration-300 hover:shadow-yellow-glow">
+                            class="bg-gradient-to-r from-custom-yellow-400 via-custom-yellow-500 to-custom-yellow-600 text-navy-900 px-10 py-6 rounded-2xl sm:rounded-l-none sm:rounded-r-2xl font-bold text-xl shadow-2xl">
                             <i class="fa-solid fa-rocket mr-3"></i>Search Now
                         </button>
                     </form>
@@ -295,9 +297,17 @@
 
     /* Custom gradient animation */
     @keyframes gradient {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+        0% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
     }
 
     .animate-gradient {
